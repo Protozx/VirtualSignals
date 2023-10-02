@@ -42,8 +42,8 @@ def datos():
     
     return "no"
 
-@app.route('/fredy', methods=['POST'])
-def fredy():
+@app.route('/urias', methods=['POST'])
+def urias():
     global v
     
     return v
