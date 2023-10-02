@@ -10,6 +10,40 @@ $(document).ready(function () {
 
   $("#per").text(nombre);
 
+  function datificar(numero, tipo) {
+    var amplitudid = "#a" + numero;
+    var frecid = "#b" + numero;
+    var muesid = "#c" + numero;
+    var perioid = "#d" + numero;
+    var colorid = "#i" + numero;
+    var parid = "#j" + numero;
+    var contid = "#k" + numero;
+    var sigmaid = "#e" + numero;
+    var omegaid = "#f" + numero;
+    var frec_angid = "#g" + numero;
+    var ang_faseid = "#h" + numero;
+    var desplaid = "#m" + numero;
+    var dest = "gra" + numero;
+
+    return {
+        amplitud: $(amplitudid).val(),
+        frecuencia: $(frecid).val(),
+        muestration: $(muesid).val(),
+        periodo: $(perioid).val(),
+        sigma: $(sigmaid).val(),
+        omega: $(omegaid).val(),
+        frecuencia_angular: $(frec_angid).val(),
+        angulo_fase: $(ang_faseid).val(),
+        color: $(colorid).val(),
+        desplazamiento: $(desplaid).val(),
+        par: $(parid).val(),
+        continuidad: $(contid).val(),
+        destino: dest,
+        tipo: tipo,
+        id: numero,
+    }
+  }
+
   function identificar(url, primario, destino, lineas, tipo) {
     Papa.parse(url, {
       download: true,
@@ -358,64 +392,28 @@ $(document).ready(function () {
   }
 
   $(document).on("click", ".recolector", function () {
-    // amplitud a
-    // frecuencia b
-    // muestreo c
-    // periodo d
-    // sigma e
-    // omega f
-    // fangular g
-    // afase h
-    // desplazamiento m
     var numero = $(this).attr("data-id");
-    var destino = "gra" + numero;
-    var amplitudid = "#a" + numero;
-    var frecid = "#b" + numero;
-    var muesid = "#c" + numero;
-    var perioid = "#d" + numero;
-    var colorid = "#i" + numero;
-    var parid = "#j" + numero;
-    var contid = "#k" + numero;
-    var sigmaid = "#e" + numero;
-    var omegaid = "#f" + numero;
-    var frec_angid = "#g" + numero;
-    var ang_faseid = "#h" + numero;
-    var desplaid = "#m" + numero;
     var tipoe = $(this).attr("data-tipo");
-    var nombre = $(this).attr("data-nombre");
+    let datos = datificar(numero,tipoe);
 
     $.ajax({
       url: "/datos",
-      data: {
-        amplitud: $(amplitudid).val(),
-        frecuencia: $(frecid).val(),
-        muestration: $(muesid).val(),
-        periodo: $(perioid).val(),
-        sigma: $(sigmaid).val(),
-        omega: $(omegaid).val(),
-        frecuencia_angular: $(frec_angid).val(),
-        angulo_fase: $(ang_faseid).val(),
-        desplazamiento: $(desplaid).val(),
-        par: $(parid).val(),
-        continuidad: $(contid).val(),
-        tipo: tipoe,
-        id: numero,
-      },
+      data: datos,
       type: "POST",
       success: function (response) {
-        if ($(contid).val() == 0) {
+        if (datos.continuidad == 0) {
           identificar(
             "/static/data/" + numero + ".csv",
-            $(colorid).val(),
-            destino,
+            datos.color,
+            datos.destino,
             "lines",
             "scatter"
           );
         } else {
           identificar(
             "/static/data/" + numero + ".csv",
-            $(colorid).val(),
-            destino,
+            datos.color,
+            datos.destino,
             "markers",
             "bar"
           );
@@ -490,24 +488,40 @@ $(document).ready(function () {
   });
 
   $(document).on("mouseenter", ".pulsblue", function () {
-    $(this).removeClass("btn-secondary");
-    $(this).addClass("btn-primary text-white pulse");
+    $(this).addClass("btn-primary pulse");
+  }).on("mouseleave", ".pulsblue", function () {
+    $(this).removeClass("btn-primary pulse");
   });
 
-  $(document).on("mouseleave", ".pulsblue", function () {
-    $(this).removeClass("btn-primary text-white pulse");
-    $(this).addClass("btn-secondary");
-  });
+  $(document)
+    .on("mouseenter", ".pulsred", function () {
+      $(this).removeClass("btn-secondary");
+      $(this).addClass("btn-danger text-white pulse");
+    })
+    .on("mouseleave", ".pulsred", function () {
+      $(this).removeClass("btn-danger text-white pulse");
+      $(this).addClass("btn-secondary");
+    });
 
-  $(document).on("mouseenter", ".pulsred", function () {
-    $(this).removeClass("btn-secondary");
-    $(this).addClass("btn-danger text-white pulse");
-  });
+  $(document)
+    .on("mouseenter", ".pulscyan", function () {
+      $(this).removeClass("btn-secondary");
+      $(this).addClass("btn-primary text-white pulse");
+    })
+    .on("mouseleave", ".pulscyan", function () {
+      $(this).removeClass("btn-primary text-white pulse");
+      $(this).addClass("btn-secondary");
+    });
 
-  $(document).on("mouseleave", ".pulsred", function () {
-    $(this).removeClass("btn-danger text-white pulse");
-    $(this).addClass("btn-secondary");
-  });
+  $(document)
+    .on("mouseenter", ".pulsgreen", function () {
+      $(this).removeClass("btn-secondary");
+      $(this).addClass("btn-success text-white pulse");
+    })
+    .on("mouseleave", ".pulsgreen", function () {
+      $(this).removeClass("btn-success text-white pulse");
+      $(this).addClass("btn-secondary");
+    });
 
   $(document)
     .on("mouseenter", ".actualizar", function () {
@@ -542,7 +556,7 @@ $(document).ready(function () {
     $("#chunche" + numero).addClass("d-none");
   });
 
-  
+
 
 
 
