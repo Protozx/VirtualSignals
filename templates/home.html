@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+        integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+        integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/basic.css') }}">
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+
+    <title>Virtual Capi</title>
+
+</head>
+
+<body class="bg-black g-0">
+    <div id="texto_bg" class="container-fluid mt-2 ms-2 g-0">
+        <div id="barra_superior_bg" class="container-fluid g-0">
+            <div class="row">
+                <div class="col-9 text-start">
+                    <h1 class="mt-3 mt-sm-0 text-white" id="nombreusuarioprint"><i
+                            class="fa-solid fa-kiwi-bird fa-1x ms-2 me-2" style="color: hsl(251, 100%, 55%);"></i> Virtual Capi </h1>
+                </div>
+                <div class="col-3 text-end">
+                    <div class="d-flex h-100 align-items-center justify-content-end">
+                        
+                        <button
+                            class="btn btn-primary text-black me-4 m-1 px-3 d-flex justify-content-center align-items-center esperanza pulse"
+                            id="ingresarh">
+                            <div class="mb-0 ms-1 me-1"> Comenzar </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="cuerpo_bg" class="mt-2 container-fluid g-0 fadeIn">
+
+            <div name="area_cuerpo" class="row">
+                <div class="col-0 col-sm-0">
+                </div>
+                <div class="col-11 col-sm-12 ms-3 ms-sm-0 text-start bg-black shadow-sm rounded-5">
+
+
+                    <div id="Verdadero cuerpo_main" class="mt-3 container-fluid">
+
+                        <div name="titulo" class="container-fluid g-0">
+
+                            <div name="base-de-cuerpo-interno" class="container-fluid g-0">
+                                <div class="row ">
+                                    <div class="col-0 col-sm-1"> </div>
+                                    <div name="escribe-el-texto-aqui" class="col-12 col-sm-10">
+
+
+                                        <div id="seccion1" class="container-fluid g-0 mt-3 mb-4">
+
+                                            <div class="row ">
+
+
+                                                <div class="col-12 col-md-6 d-flex d-sm-none">
+
+                                                    <div id="demo" class="carousel slide d-flex d-sm-none"
+                                                        data-bs-ride="carousel" data-bs-interval="2500">
+
+                                                        <div class="carousel-inner">
+                                                            <div class="carousel-item active">
+
+                                                                <div class="row bg-dark shadow-sm rounded-5 mt-3 mb-4">
+                                                                    <div class="col-1"></div>
+                                                                    <div
+                                                                        class="col-2 d-flex align-items-center justify-content-center mt-4 mb-3">
+                                                                        <i class="fa-solid fa-user fa-3x"
+                                                                            style="color: #237bff;"></i>
+                                                                    </div>
+                                                                    <div
+                                                                        class="col-8 d-flex align-items-center justify-content-center mt-4 mb-3">
+                                                                        <p class="text-white">Un administrador
+                                                                            debe
+                                                                            haber creado
+                                                                            tu cuenta para que
+                                                                            tengas acceso al sistema</p>
+                                                                    </div>
+                                                                    <div class="col-1"></div>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="carousel-item">
+
+                                                                <div class="row bg-dark shadow-sm rounded-5 mt-3 mb-4">
+                                                                    <div class="col-1"></div>
+                                                                    <div
+                                                                        class="col-2 d-flex align-items-center justify-content-center mt-4 mb-3">
+                                                                        <i class="fa-solid fa-lock fa-3x"
+                                                                            style="color: #237bff;"></i>
+                                                                    </div>
+                                                                    <div
+                                                                        class="col-8 d-flex align-items-center justify-content-center mt-4 mb-3">
+                                                                        <p class="text-white">Por seguridad no compartas
+                                                                            tu
+                                                                            informacion de inicio de sesion con
+                                                                            otras personas.</p>
+                                                                    </div>
+
+                                                                    <div class="col-1"></div>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="carousel-item">
+                                                                <div class="row bg-dark shadow-sm rounded-5 mt-3 mb-4">
+                                                                    <div class="col-1"></div>
+                                                                    <div
+                                                                        class="col-2 d-flex align-items-center justify-content-center mt-4 mb-3">
+                                                                        <i class="fa-solid fa-file-invoice fa-3x"
+                                                                            style="color: #237bff;"></i>
+                                                                    </div>
+                                                                    <div
+                                                                        class="col-8 d-flex align-items-center justify-content-center mt-4 mb-3">
+                                                                        <p class="text-white"> Recuerda que al finalizar
+                                                                            de llenar tu encuesta puedes obtener un
+                                                                            comprobante.</p>
+                                                                    </div>
+                                                                    <div class="col-1"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <button class="carousel-control-prev" type="button"
+                                                            data-bs-target="#demo" data-bs-slide="prev">
+                                                        </button>
+                                                        <button class="carousel-control-next" type="button"
+                                                            data-bs-target="#demo" data-bs-slide="next">
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="col-12 col-md-6">
+                                                    <h1 class="text-white mt-3 mb-4"> Práctica 2</h1>
+                                                    <p class="text-white mt-3 mb-4"> Generación de señales elementales
+                                                    </p>
+
+                                                    <p class="text-white mt-3 mb-4"> 
+                                                        En esta práctica de procesamiento de señales, se explorarán las diferentes señales elementales, tales como el escalón unitario y la señal senoidal. El programa, diseñado con una interfaz amigable e intuitiva, ofrece a los usuarios la oportunidad de interactuar y modificar parámetros básicos para alterar la visualización de estas señales, permitiendo así un mejor entendimiento de sus características y comportamientos fundamentales. Los participantes podrán ajustar atributos como la frecuencia y el color, con el fin de observar el efecto de dichos cambios en la conformación y presentación de las señales. A través de esta experiencia práctica, los usuarios ganarán un conocimiento más profundo y concreto de las señales elementales, lo cual es fundamental para el estudio y la aplicación del procesamiento de señales en diversas áreas de la ingeniería y la ciencia.
+                                                    </p>
+                                                    
+                                                    <br><br>
+
+
+
+                                                    <div class="row">
+
+                                                        <div class="col-1"></div>
+                                                        <div class="col-10">
+                                                            <div id="demo"
+                                                                class="carousel slide d-none d-sm-flex bg-dark shadow-sm rounded-5 mt-3 mb-4"
+                                                                data-bs-ride="carousel" data-bs-interval="2500">
+
+                                                                <div class="carousel-inner">
+                                                                    <div class="carousel-item active">
+
+                                                                        <div
+                                                                            class="row bg-dark shadow-sm rounded-5 mt-3 mb-4">
+                                                                            <div class="col-1"></div>
+                                                                            <div
+                                                                                class="col-2 d-flex align-items-center justify-content-center mt-4 mb-3">
+                                                                                <i class="fa-solid fa-1 fa-4x"
+                                                                                    style="color: #1b50ff;"></i>
+                                                                            </div>
+                                                                            <div
+                                                                                class="col-8 d-flex align-items-center justify-content-center mt-4 mb-3">
+                                                                                <p class="text-white"> Agrega la señal que deseas visualizar. </p>
+                                                                            </div>
+                                                                            <div class="col-1"></div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div class="carousel-item">
+
+                                                                        <div
+                                                                            class="row bg-dark shadow-sm rounded-5 mt-3 mb-4">
+                                                                            <div class="col-1"></div>
+                                                                            <div
+                                                                                class="col-2 d-flex align-items-center justify-content-center mt-4 mb-3">
+                                                                                <i class="fa-solid fa-2 fa-4x"
+                                                                                    style="color: #0080ff;"></i>
+                                                                            </div>
+                                                                            <div
+                                                                                class="col-8 d-flex align-items-center justify-content-center mt-4 mb-3">
+                                                                                <p class="text-white"> Cambia los parámetros de acuerdo a tus necesidades. </p>
+                                                                            </div>
+
+                                                                            <div class="col-1"></div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    <div class="carousel-item">
+                                                                        <div
+                                                                            class="row bg-dark shadow-sm rounded-5 mt-3 mb-4">
+                                                                            <div class="col-1"></div>
+                                                                            <div
+                                                                                class="col-2 d-flex align-items-center justify-content-center mt-4 mb-3">
+                                                                                <i class="fa-solid fa-3 fa-4x"
+                                                                                    style="color: #0077ff;"></i>
+                                                                            </div>
+                                                                            <div
+                                                                                class="col-8 d-flex align-items-center justify-content-center mt-4 mb-3">
+                                                                                <p class="text-white">Actualiza la señal. </p>
+                                                                            </div>
+                                                                            <div class="col-1"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <button class="carousel-control-prev" type="button"
+                                                                    data-bs-target="#demo" data-bs-slide="prev">
+                                                                </button>
+                                                                <button class="carousel-control-next" type="button"
+                                                                    data-bs-target="#demo" data-bs-slide="next">
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-1"></div>
+
+                                                    </div>
+
+
+                                                </div>
+
+                                                <div class="col-12 col-md-6 d-sm-flex justify-content-center align-items-center">
+
+                                                    <img src="{{ url_for('static', filename='img/capi.jpg') }}" alt="Descripción de la imagen"
+                                                        class="img-fluid m-sm-5 m-0 shadow-sm rounded-2 puerco">
+
+                                                </div>
+
+
+                                            </div>
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-0 col-sm-1"> </div>
+                                </div>
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-0 col-sm-0">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+
+</html>

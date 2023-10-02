@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+      integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+      integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"
+      integrity="sha512-mS3oJ3NDBADQBxpBYuK/jqeQysit9+O0FWhsxprErA1xluQNlxmUmTaACrZMBoTAmOu0Zn4AR4ao17226DUNlA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.js"
+      integrity="sha512-M0cjXJTonbWEdLI3HJIoJSQBb9980RWmOCk+tvWkhgFrAZqSSIg1+1Db/vDu7Qk9W3L90gBynve17PYvarjfQA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js"
+      integrity="sha512-2cbsQGdowNDPcKuoBd2bCcsJky87Mv0LEtD/nunJUgk6MOYTgVMGihS/xCEghNf04DPhNiJ4DZw5BxDd1uyOdw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/RecordRTC/5.0.8/RecordRTC.js"
+      integrity="sha512-8Wqe6G9xRtYEITut5GD5ReENoZzDacwzw+gNFMtUeHy1Ic1/CD2pxRxrYhodpdO56tc+E/2oLqWiPeUjGHqnhw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/black/pace-theme-center-atom.min.css"
+      integrity="sha512-qO1Hk/5Vlp2V2fUPfyA4NSqKeXX1P9cYqyaFm5/TwnSxB+XmvEBOev7L5Qy2KsWQZMXtzeX3HZpr5DwO1V2cxg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <script src="{{ url_for('static', filename='js/libs/sweetAlert.min.js') }}"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/basic.css') }}"
+    />
+    <script src="{{ url_for('static', filename='js/imagenes.js') }}"></script>
+
+    <title>Virtual Capi</title>
+  </head>
+
+  <body class="bg-black g-0">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #202529">
+      <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <div class="row">  
+              <div class="col-6 d-flex h-100 align-items-center justify-content-center mb-2"><i class="fa-solid fa-kiwi-bird fa-3x iazul"></i></div>
+              <div class="col-6 d-flex h-100 align-items-center justify-content-start mt-2"><h1 class="text-white"> Virtual Capi </h1></div>
+            </div>
+          </a>
+          <div class="navbar-nav">
+              <li class="nav-item">
+                  <button class="btn btn-primary text-black ms-3 me-4 m-1 px-3 despair pulsblue" id="modo2">
+                      <div class="mb-0 ms-1 me-1">Variable dependiente</div>
+                  </button>
+              </li>
+              <li class="nav-item">
+                  <button class="btn btn-primary text-black ms-3 me-4 m-1 px-3 despair pulsred" id="modo3">
+                      <div class="mb-0 ms-1 me-1">Variable independiente</div>
+                  </button>
+              </li>
+              <li class="nav-item">
+                  <button class="btn btn-primary text-black ms-3 me-4 m-1 px-3 despair pulsblue" id="grabar">
+                      <div class="mb-0 ms-1 me-1">Original</div>
+                  </button>
+              </li>
+          </div>
+      </div>
+  </nav>
+  
+    <br /><br /><br />
+    <div id="texto_bg" class="container-fluid mt-2 ms-2 g-0">
+      <div id="barra_superior_bg" class="container-fluid g-0">
+        <div class="row">
+          <div class="col-9 text-start">
+            
+          </div>
+          <div class="col-3 text-end d-none">
+            <div class="d-flex h-100 align-items-center justify-content-end">
+              <button
+                class="btn btn-primary text-black me-4 m-1 px-3 d-flex justify-content-center align-items-center esperanza pulse"
+                id="ingresarh"
+              >
+                <div class="mb-0 ms-1 me-1">Comenzar</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="cuerpo_bg" class="mt-2 container-fluid g-0 fadeIn">
+        <div name="area_cuerpo" class="row">
+          <div class="col-0 col-sm-0"></div>
+          <div
+            class="col-11 col-sm-12 ms-3 ms-sm-0 text-start bg-black shadow-sm rounded-5"
+          >
+            <div id="Verdadero cuerpo_main" class="mt-3 container-fluid">
+              <div name="titulo" class="container-fluid g-0">
+                <div name="base-de-cuerpo-interno" class="container-fluid g-0">
+                  <div class="row">
+                    <div class="col-0 col-sm-1"></div>
+                    <div name="escribe-el-texto-aqui" class="col-12 col-sm-10">
+                      <div id="tablon" class="container-fluid g-0 mt-3 mb-4">
+                        <div class="row" id="extra">
+                          <div class="col-9">
+                            <div class="form-group">
+                              <label for="senal">.</label>
+                              <select
+                                class="form-select mi-input custom-input rounded-5 w-100 ojo"
+                                id="senal"
+                              >
+                                <option>Escalon Unitario</option>
+                                <option>Impulso Unitario</option>
+                                <option>Rampa</option>
+                                <option>Exponencial real</option>
+                                <option>Exponencial compleja</option>
+                                <option>Senoidal</option>
+                              </select>
+                            </div>
+                          </div>
+
+                          <div class="col-3">
+                            <div
+                              class="mt-2 mb-4 d-flex h-100 align-items-center justify-content-end"
+                            >
+                              <button
+                                class="btn btn-secondary text-black px-4 rounded-4 despair pulsito"
+                                id="agregar"
+                              >
+                                <div class="ms-5 me-5">Agregar</div>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-0 col-sm-1"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-0 col-sm-0"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
