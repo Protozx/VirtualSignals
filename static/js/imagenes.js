@@ -10,7 +10,45 @@ $(document).ready(function () {
 
   $("#per").text(nombre);
 
-  function datificar(numero, tipo) {
+  function gettipo(numero){
+    var tipoid = "#l" + numero;
+    return $(tipoid).attr("data-tipo");
+  }
+
+  function actualizar(numero){
+    let datos = datificar(numero);
+
+    $.ajax({
+      url: "/datos",
+      data: datos,
+      type: "POST",
+      success: function (response) {
+        if (datos.continuidad == 0) {
+          identificar(
+            "/static/data/" + numero + ".csv",
+            datos.color,
+            datos.destino,
+            "lines",
+            "scatter"
+          );
+        } else {
+          identificar(
+            "/static/data/" + numero + ".csv",
+            datos.color,
+            datos.destino,
+            "markers",
+            "bar"
+          );
+        }
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+
+  }
+
+  function datificar(numero) {
     var amplitudid = "#a" + numero;
     var frecid = "#b" + numero;
     var muesid = "#c" + numero;
@@ -24,23 +62,24 @@ $(document).ready(function () {
     var ang_faseid = "#h" + numero;
     var desplaid = "#m" + numero;
     var dest = "gra" + numero;
+    var tipoid = "#l" + numero;
 
     return {
-        amplitud: $(amplitudid).val(),
-        frecuencia: $(frecid).val(),
-        muestration: $(muesid).val(),
-        periodo: $(perioid).val(),
-        sigma: $(sigmaid).val(),
-        omega: $(omegaid).val(),
-        frecuencia_angular: $(frec_angid).val(),
-        angulo_fase: $(ang_faseid).val(),
-        color: $(colorid).val(),
-        desplazamiento: $(desplaid).val(),
-        par: $(parid).val(),
-        continuidad: $(contid).val(),
-        destino: dest,
-        tipo: tipo,
-        id: numero,
+      amplitud: $(amplitudid).val(),
+      frecuencia: $(frecid).val(),
+      muestration: $(muesid).val(),
+      periodo: $(perioid).val(),
+      sigma: $(sigmaid).val(),
+      omega: $(omegaid).val(),
+      frecuencia_angular: $(frec_angid).val(),
+      angulo_fase: $(ang_faseid).val(),
+      color: $(colorid).val(),
+      desplazamiento: $(desplaid).val(),
+      par: $(parid).val(),
+      continuidad: $(contid).val(),
+      destino: dest,
+      tipo: $(tipoid).attr("data-tipo"),
+      id: numero,
     }
   }
 
@@ -257,14 +296,14 @@ $(document).ready(function () {
             </div>
         </div>
 
-        <div class="container-fluid mt-5 mb-4">    
+        <div class="container-fluid mt-5 mb-4 d-none" id="ii${N}">    
             <h5 class="text-white text-center mt-2 mb-4">Color
             </h5>
             <input type="color" id="i${N}" value="#00fffb"
                         class="form-control mi-input custom-input rounded-5 mb-2 ojo">
         </div>
 
-        <div class="container-fluid mt-5 mb-3">    
+        <div class="container-fluid mt-5 mb-3 d-none" id="jj${N}">    
             <h5 class="text-white text-center mt-2 mb-4">Paridad
             </h5>
             <select class="form-select mi-input custom-input rounded-5 w-100 ojo" id="j${N}">
@@ -274,7 +313,7 @@ $(document).ready(function () {
             </select>
         </div>
 
-        <div class="container-fluid mt-4 mb-3">    
+        <div class="container-fluid mt-4 mb-3 d-none" id="kk${N}">    
             <h5 class="text-white text-center mt-2 mb-4">Forma
             </h5>
             <select class="form-select mi-input custom-input rounded-5 w-100 ojo" id="k${N}">
@@ -344,6 +383,9 @@ $(document).ready(function () {
     // fangular g
     // afase h
     // desplazamiento m
+    // color i
+    // paridad j
+    // forma k
 
     switch (tipo) {
       case 1:
@@ -391,68 +433,48 @@ $(document).ready(function () {
     }
   }
 
+
+
+
   $(document).on("click", ".recolector", function () {
     var numero = $(this).attr("data-id");
-    var tipoe = $(this).attr("data-tipo");
-    let datos = datificar(numero,tipoe);
-
-    $.ajax({
-      url: "/datos",
-      data: datos,
-      type: "POST",
-      success: function (response) {
-        if (datos.continuidad == 0) {
-          identificar(
-            "/static/data/" + numero + ".csv",
-            datos.color,
-            datos.destino,
-            "lines",
-            "scatter"
-          );
-        } else {
-          identificar(
-            "/static/data/" + numero + ".csv",
-            datos.color,
-            datos.destino,
-            "markers",
-            "bar"
-          );
-        }
-      },
-      error: function (error) {
-        console.log(error);
-      },
-    });
+    actualizar(numero);
   });
+
+  function getnombre(tipo){
+    tipoe = ""
+    switch (tipo) {
+      case 1:
+        tipoe = "Escalon Unitario";
+        break;
+      case 2:
+        tipoe = "Impulso Unitario";
+        break;
+      case 3:
+        tipoe = "Rampa";
+        break;
+      case 4:
+        tipoe = "Exponencial real";
+        break;
+      case 5:
+        tipoe = "Exponencial compleja";
+        break;
+      case 6:
+        tipoe = "Senoidal";
+        break;
+    }
+    return tipoe
+  }
 
   $(document).on("click", "#agregar", function () {
     conteo = conteo + 1;
     var destino = "gra" + conteo;
-    var elec = $("#senal").val();
-
-    var tipoe = 1;
-    switch (elec) {
-      case "Escalon Unitario":
-        tipoe = 1;
-        break;
-      case "Impulso Unitario":
-        tipoe = 2;
-        break;
-      case "Rampa":
-        tipoe = 3;
-        break;
-      case "Exponencial real":
-        tipoe = 4;
-        break;
-      case "Exponencial compleja":
-        tipoe = 5;
-        break;
-      case "Senoidal":
-        tipoe = 6;
-        break;
-    }
-    agregarElemento(conteo, tipoe, elec);
-    sliders(conteo, tipoe);
+    var elec = parseInt($("#senal").val());
+    alert(elec);
+    var tipoe = getnombre(elec);
+    
+    agregarElemento(conteo, elec, tipoe);
+    sliders(conteo, elec);
     $.ajax({
       url: "/datos",
       data: {
@@ -467,7 +489,7 @@ $(document).ready(function () {
         desplazamiento: 0,
         par: 0,
         continuidad: 0,
-        tipo: tipoe,
+        tipo: elec,
         id: conteo,
       },
       type: "POST",
