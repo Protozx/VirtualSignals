@@ -1,5 +1,9 @@
 $(document).ready(function () {
   var conteo = 1;
+  var op1 = 0;
+  var op2 = 0;
+  var opsign = 0;
+
   $("#ingresarh").click(function () {
     window.location.href = "login.php";
   });
@@ -352,7 +356,7 @@ $(document).ready(function () {
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 
                 <div class="col-10">
-                  <button  id="q${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
+                  <button  id="q${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar"  data-id='${N}';>
                     <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Sumar
                     </h5></div>
                   </button>
@@ -366,7 +370,7 @@ $(document).ready(function () {
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 
                 <div class="col-10">
-                  <button  id="r${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
+                  <button  id="r${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar"  data-id='${N}';>
                     <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Restar
                     </h5></div>
                   </button>
@@ -380,7 +384,7 @@ $(document).ready(function () {
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 
                 <div class="col-10">
-                  <button  id="s${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
+                  <button  id="s${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar"  data-id='${N}';>
                     <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Multiplicar
                     </h5></div>
                   </button>
@@ -394,7 +398,7 @@ $(document).ready(function () {
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 
                 <div class="col-10">
-                  <button  id="t${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
+                  <button  id="t${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar" data-id='${N}';>
                     <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Dividir
                     </h5></div>
                   </button>
@@ -424,6 +428,34 @@ $(document).ready(function () {
                 <div class="col-10">
                   <button  id="v${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
                     <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Diferenciar
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="ww${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="w${N}" class="btn btn-primary text-white mi-input rounded-5 w-100 mb-2 esperanza">
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Operar
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="xx${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="x${N}" class="btn btn-danger text-white mi-input rounded-5 w-100 mb-2 esperanza desoperar" data-id='${N}';>
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Cancelar
                     </h5></div>
                   </button>
                 </div>
@@ -508,13 +540,56 @@ $(document).ready(function () {
     $("#tablon").append(nuevoElemento);
   }
 
+  function elegir(id) {
+    $("#chunche" + id).removeClass("bg-dark");
+    $("#chunche" + id).addClass("bg-info");
+  }
+
+  function deselegir(id) {
+    $("#chunche" + id).removeClass("bg-info");
+    $("#chunche" + id).addClass("bg-dark");
+  }
+
+  function iniciarop(id) {
+    elegir(id);
+    cambiarmodo(4);
+    $("#ww" + id).addClass("d-none");
+    sliders(id,14);
+  }
+
+  function operar(op) {
+    const operaciones = {
+      1: "Suma",
+      2: "Resta",
+      3: "Multiplicación",
+      4: "División",
+    };
+
+    $.ajax({
+      url: "/urias",
+      data: {
+        nombre: operaciones[op],
+        tipo: op,
+        id1: op1,
+        id2: op2,
+      },
+      type: "POST",
+      success: function (response) {
+
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+
+  }
 
   function cambiarmodo(modo) {
     var i = 2;
     var cam = 1;
 
-    while (i < (conteo+1)) {
-      const ids = ["aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "mm", "nn", "oo", "pp", "qq", "rr", "ss", "tt", "uu", "vv"];
+    while (i < (conteo + 1)) {
+      const ids = ["aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "mm", "nn", "oo", "pp", "qq", "rr", "ss", "tt", "uu", "vv", "ww", "xx"];
       for (const idPrefix of ids) {
         const element = $("#" + idPrefix + i);
         if (!element.hasClass("d-none")) {
@@ -526,22 +601,31 @@ $(document).ready(function () {
 
     i = 2;
 
+    let tipo;
+
     if (modo == 1) {
-      while (i < (conteo+1)) {
-        sliders(i, gettipo(i));
-        i++;
-      }
+      tipo = i => gettipo(i);
     } else {
-      if (modo == 2) {
-        cam = 11;
-      } else {
-        cam = 12;
+      const camMapping = {
+        2: 11,
+        3: 12,
+        4: 13,
+      };
+
+      const cam = camMapping[modo];
+      if (!cam) {
+        console.error(`Modo no reconocido: ${modo}`);
+        return;
       }
-      while (i < (conteo+1)) {
-        sliders(i, cam);
-        i++;
-      }
+
+      tipo = () => cam;
     }
+
+    while (i < (conteo + 1)) {
+      sliders(i, tipo(i));
+      i++;
+    }
+
 
   }
 
@@ -555,6 +639,8 @@ $(document).ready(function () {
       6: 3,
       11: 4,
       12: 5,
+      13: 6,
+      14: 7,
     };
 
     const grafToIds = {
@@ -563,6 +649,8 @@ $(document).ready(function () {
       3: ["aa", "gg", "hh", "cc", "ii", "jj", "kk"],
       4: ["nn", "oo", "pp", "ii"],
       5: ["aa", "qq", "rr", "ss", "tt", "uu", "vv", "ii"],
+      6: ["ww"],
+      7: ["xx"],
     };
 
     const graf = tipoToGraf[tipo];
@@ -759,6 +847,17 @@ $(document).ready(function () {
     } else if (valor > $(this).attr('max')) {
       $(this).val($(this).attr('max'));
     }
+  });
+
+  $(document).on("click", ".operar", function () {
+    var numero = $(this).attr("data-id");
+    iniciarop(numero);
+  });
+
+  $(document).on("click", ".desoperar", function () {
+    var numero = $(this).attr("data-id");
+    deselegir(numero)
+    cambiarmodo(3);
   });
 
 
