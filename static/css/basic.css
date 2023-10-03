@@ -125,6 +125,10 @@ h1 {
     background-color: #eb0fa5;
 }
 
+.btn-black {
+    background-color: #000000;
+}
+
 .btn-danger {
     background-color: #23ff3d;
 }
@@ -152,6 +156,10 @@ h1 {
     /* Este es el color primary de Bootstrap */
     box-shadow: 0 0 0 0.2rem rgba(61, 129, 255, 0.751);
     /* Este es el estilo de foco de Bootstrap con el color primary */
+}
+
+.custom-op:hover {
+    background-color: rgb(0, 0, 0);
 }
 
 .menu:hover {
@@ -242,6 +250,28 @@ h1 {
 
 .spin {
     animation: spin 1s infinite;
+}
+
+@keyframes popup {
+    0% {
+        opacity: 0;
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.popup {
+    animation: popup 3s;
 }
 
 @keyframes fadeIn {

@@ -10,12 +10,12 @@ $(document).ready(function () {
 
   $("#per").text(nombre);
 
-  function gettipo(numero){
+  function gettipo(numero) {
     var tipoid = "#l" + numero;
     return $(tipoid).attr("data-tipo");
   }
 
-  function actualizar(numero){
+  function actualizar(numero) {
     let datos = datificar(numero);
 
     $.ajax({
@@ -296,6 +296,141 @@ $(document).ready(function () {
             </div>
         </div>
 
+        <div class="container-fluid mt-5 mb-4 d-none" id="nn${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Escalamiento en el tiempo
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2"> 1 </h6>
+                </div>
+                <div class="col-8">
+                    <input type="number" id="n${N}" min="1" max="100" step="0.01" value="1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 libre">
+                </div>
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2"> 100 </h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="oo${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Reflexion
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2"> 1 </h6>
+                </div>
+                <div class="col-8">
+                    <input type="number" id="o${N}" min="1" max="10" step="1" value="1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 libre">
+                </div>
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2"> 10 </h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="pp${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Corrimiento en el tiempo
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2"> 1 </h6>
+                </div>
+                <div class="col-8">
+                    <input type="number" id="p${N}" min="1" max="100" step="0.1" value="1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 libre">
+                </div>
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2"> 100 </h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="qq${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="q${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Sumar
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="rr${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="r${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Restar
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="ss${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="s${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Multiplicar
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="tt${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="t${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Dividir
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="uu${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="u${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Integrar
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="vv${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="v${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Diferenciar
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
         <div class="container-fluid mt-5 mb-4 d-none" id="ii${N}">    
             <h5 class="text-white text-center mt-2 mb-4">Color
             </h5>
@@ -373,65 +508,72 @@ $(document).ready(function () {
     $("#tablon").append(nuevoElemento);
   }
 
+
+  function cambiarmodo(modo) {
+    var i = 2;
+    var cam = 1;
+
+    while (i < (conteo+1)) {
+      const ids = ["aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "mm", "nn", "oo", "pp", "qq", "rr", "ss", "tt", "uu", "vv"];
+      for (const idPrefix of ids) {
+        const element = $("#" + idPrefix + i);
+        if (!element.hasClass("d-none")) {
+          element.addClass("d-none");
+        }
+      }
+      i++;
+    }
+
+    i = 2;
+
+    if (modo == 1) {
+      while (i < (conteo+1)) {
+        sliders(i, gettipo(i));
+        i++;
+      }
+    } else {
+      if (modo == 2) {
+        cam = 11;
+      } else {
+        cam = 12;
+      }
+      while (i < (conteo+1)) {
+        sliders(i, cam);
+        i++;
+      }
+    }
+
+  }
+
   function sliders(id, tipo) {
-    // amplitud a
-    // frecuencia b
-    // muestreo c
-    // periodo d
-    // sigma e
-    // omega f
-    // fangular g
-    // afase h
-    // desplazamiento m
-    // color i
-    // paridad j
-    // forma k
+    const tipoToGraf = {
+      1: 1,
+      2: 1,
+      3: 1,
+      4: 2,
+      5: 2,
+      6: 3,
+      11: 4,
+      12: 5,
+    };
 
-    switch (tipo) {
-      case 1:
-        $("#aa" + id).removeClass("d-none");
-        $("#bb" + id).removeClass("d-none");
-        $("#cc" + id).removeClass("d-none");
-        $("#dd" + id).removeClass("d-none");
-        $("#mm" + id).removeClass("d-none");
-        break;
-      case 2:
-        $("#aa" + id).removeClass("d-none");
-        $("#bb" + id).removeClass("d-none");
-        $("#cc" + id).removeClass("d-none");
-        $("#dd" + id).removeClass("d-none");
-        $("#mm" + id).removeClass("d-none");
+    const grafToIds = {
+      1: ["aa", "bb", "cc", "dd", "mm", "ii", "jj", "kk"],
+      2: ["ee", "ff", "cc", "ii", "jj", "kk"],
+      3: ["aa", "gg", "hh", "cc", "ii", "jj", "kk"],
+      4: ["nn", "oo", "pp", "ii"],
+      5: ["aa", "qq", "rr", "ss", "tt", "uu", "vv", "ii"],
+    };
 
-        break;
-      case 3:
-        $("#aa" + id).removeClass("d-none");
-        $("#bb" + id).removeClass("d-none");
-        $("#cc" + id).removeClass("d-none");
-        $("#dd" + id).removeClass("d-none");
-        $("#mm" + id).removeClass("d-none");
+    const graf = tipoToGraf[tipo];
 
-        break;
-      case 4:
-        $("#ee" + id).removeClass("d-none");
-        $("#ff" + id).removeClass("d-none");
-        $("#cc" + id).removeClass("d-none");
-
-        break;
-      case 5:
-        $("#ee" + id).removeClass("d-none");
-        $("#ff" + id).removeClass("d-none");
-        $("#cc" + id).removeClass("d-none");
-
-        break;
-      case 6:
-        $("#aa" + id).removeClass("d-none");
-        $("#gg" + id).removeClass("d-none");
-        $("#hh" + id).removeClass("d-none");
-        $("#cc" + id).removeClass("d-none");
-
-        break;
+    if (graf) {
+      for (const prefix of grafToIds[graf]) {
+        $("#" + prefix + id).removeClass("d-none");
+      }
     }
   }
+
 
 
 
@@ -441,7 +583,7 @@ $(document).ready(function () {
     actualizar(numero);
   });
 
-  function getnombre(tipo){
+  function getnombre(tipo) {
     tipoe = ""
     switch (tipo) {
       case 1:
@@ -470,9 +612,8 @@ $(document).ready(function () {
     conteo = conteo + 1;
     var destino = "gra" + conteo;
     var elec = parseInt($("#senal").val());
-    alert(elec);
     var tipoe = getnombre(elec);
-    
+
     agregarElemento(conteo, elec, tipoe);
     sliders(conteo, elec);
     $.ajax({
@@ -577,6 +718,50 @@ $(document).ready(function () {
     var numero = $(this).attr("data-id");
     $("#chunche" + numero).addClass("d-none");
   });
+
+  $(document).on("click", "#modo1", function () {
+    var nuevoElemento = $(`<div class="alert alert-info ms-3 esperanza popup">
+    <strong>Modo 1</strong> Sliders generales
+  </div>`);
+    nuevoElemento.appendTo('#alertas');
+    setTimeout(function () {
+      nuevoElemento.remove();
+    }, 3000);
+    cambiarmodo(1);
+  });
+
+  $(document).on("click", "#modo2", function () {
+    var nuevoElemento = $(`<div class="alert alert-info ms-3 esperanza popup">
+    <strong>Modo 2</strong> Variable dependiente
+  </div>`);
+    nuevoElemento.appendTo('#alertas');
+    setTimeout(function () {
+      nuevoElemento.remove();
+    }, 3000);
+    cambiarmodo(2);
+  });
+
+  $(document).on("click", "#modo3", function () {
+    var nuevoElemento = $(`<div class="alert alert-info ms-3 esperanza popup">
+    <strong>Modo 3</strong> Variable independiente
+  </div>`);
+    nuevoElemento.appendTo('#alertas');
+    setTimeout(function () {
+      nuevoElemento.remove();
+    }, 3000);
+    cambiarmodo(3);
+  });
+
+  $(document).on("input", ".libre", function () {
+    var valor = parseFloat($(this).val());
+    if (isNaN(valor) || valor < $(this).attr('min')) {
+      $(this).val($(this).attr('min'));
+    } else if (valor > $(this).attr('max')) {
+      $(this).val($(this).attr('max'));
+    }
+  });
+
+
 
 
 
