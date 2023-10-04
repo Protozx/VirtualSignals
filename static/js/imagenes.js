@@ -4,6 +4,11 @@ $(document).ready(function () {
   var op2 = 0;
   var opsign = 0;
   var modo = 1;
+  let recorder;
+  let audiosArray = [];
+  let audio = new Audio();
+  var duracion = 0;
+
 
   $("#ingresarh").click(function () {
     window.location.href = "login.php";
@@ -18,6 +23,67 @@ $(document).ready(function () {
   function gettipo(numero) {
     var tipoid = "#update" + numero;
     return $(tipoid).attr("data-tipo");
+  }
+
+  function playAudio(audioblob) {
+    audio.src = URL.createObjectURL(audioblob);
+    audio.play();
+  }
+
+  function stopAudio() {
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+  }
+
+  function startRecording() {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      recorder = RecordRTC(stream, {
+        type: 'audio',
+        mimeType: 'audio/wav',
+        sampleRate: 44100,
+        bufferSize: 16384,
+        numberOfAudioChannels: 1,
+        recorderType: RecordRTC.StereoAudioRecorder
+      });
+      recorder.startRecording();
+    }).catch(function (err) {
+      alert('Error al obtener acceso al micrófono');
+      Swal.close();
+    });
+  }
+
+
+  function stopAndStoreRecording() {
+    if (!recorder) {
+      console.error('Ninguna grabación ha sido iniciada.');
+      return;
+    }
+
+    recorder.stopRecording(function () {
+      let blob = recorder.getBlob();
+      audiosArray.push(blob);
+      recorder.stream.stop();
+      recorder = null;
+    });
+  }
+
+  function stopAndPlayRecording() {
+    if (!recorder) {
+      console.error('Ninguna grabación ha sido iniciada.');
+      return;
+    }
+
+    recorder.stopRecording(function () {
+      let blob = recorder.getBlob();
+      let url = URL.createObjectURL(blob);
+      audio.src = url;
+      audio.play();
+      duracion = audio.duration * 1000;
+      recorder.stream.stop();
+      recorder = null;
+    });
   }
 
   function alertacorta(fuerte, debil) {
@@ -635,10 +701,6 @@ $(document).ready(function () {
       3: "Multiplicación",
     };
 
-    alert(op1);
-    alert(op2);
-    alert(opsign);
-
     $.ajax({
       url: "/urias",
       data: {
@@ -890,7 +952,7 @@ $(document).ready(function () {
   });
 
   $(document).on("click", "#grabar", function () {
-
+    startRecording();
     Swal.fire({
       title: "Grabando...",
       iconColor: "#258eff",
@@ -905,16 +967,9 @@ $(document).ready(function () {
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
+        stopAndPlayRecording();
+        console.log(duracion);
 
-        Swal.fire({
-          title: "Audio guardado!",
-          confirmButtonColor: "#237bff",
-          background: "#212529",
-          color: "#ffffff",
-          iconColor: "#258eff",
-          icon: "success",
-          button: "Aceptar",
-        });
 
       } else if (result.isDenied) {
 
@@ -980,6 +1035,25 @@ $(document).ready(function () {
     terminarop($(this).attr("data-id"));
   });
 
+
+
+  audio.addEventListener('loadedmetadata', function () {
+    let durationInSeconds = audio.duration;
+    duracion = durationInSeconds * 1000;
+    console.log(duracion);
+    Swal.fire({
+      title: "Reproduciendo...",
+      timer: duracion,
+      timerProgressBar: true,
+      showConfirmButton: false, // Oculta el botón de confirmación
+      showCancelButton: false,  // Oculta el botón de cancelación
+      allowOutsideClick: false, // No permite cerrar la alerta haciendo clic fuera de ella
+      allowEscapeKey: false,
+      background: "#212529",
+      color: "#ffffff",
+
+    });
+  });
 
 
 
