@@ -848,12 +848,12 @@ $(document).ready(function () {
 
   $(document)
     .on("mouseenter", ".pulsgreen", function () {
-      $(this).removeClass("btn-secondary");
-      $(this).addClass("btn-success text-white pulse");
+      $(this).removeClass("btn-dark text-white");
+      $(this).addClass("btn-info text-black pulse");
     })
     .on("mouseleave", ".pulsgreen", function () {
-      $(this).removeClass("btn-success text-white pulse");
-      $(this).addClass("btn-secondary");
+      $(this).removeClass("btn-info text-black pulse");
+      $(this).addClass("btn-dark text-white");
     });
 
   $(document)
@@ -889,6 +889,40 @@ $(document).ready(function () {
     $("#chunche" + numero).addClass("d-none");
   });
 
+  $(document).on("click", "#grabar", function () {
+
+    Swal.fire({
+      title: "Grabando...",
+      iconColor: "#258eff",
+      icon: "warning",
+      confirmButtonColor: "#237bff",
+      background: "#212529",
+      color: "#ffffff",
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: 'Pausar',
+      denyButtonText: 'Cancelar',
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+
+        Swal.fire({
+          title: "Audio guardado!",
+          confirmButtonColor: "#237bff",
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: "#258eff",
+          icon: "success",
+          button: "Aceptar",
+        });
+
+      } else if (result.isDenied) {
+
+      }
+    });
+
+  });
+
   $(document).on("click", "#modo1", function () {
     var nuevoElemento = $(`<div class="alert alert-info ms-3 esperanza popup">
     <strong>Modo 1</strong> Sliders generales
@@ -910,6 +944,7 @@ $(document).ready(function () {
     }, 3000);
     cambiarmodo(2);
   });
+
 
   $(document).on("click", "#modo3", function () {
     var nuevoElemento = $(`<div class="alert alert-info ms-3 esperanza popup">
