@@ -3,6 +3,7 @@ $(document).ready(function () {
   var op1 = 0;
   var op2 = 0;
   var opsign = 0;
+  var modo = 1;
 
   $("#ingresarh").click(function () {
     window.location.href = "login.php";
@@ -15,8 +16,18 @@ $(document).ready(function () {
   $("#per").text(nombre);
 
   function gettipo(numero) {
-    var tipoid = "#l" + numero;
+    var tipoid = "#update" + numero;
     return $(tipoid).attr("data-tipo");
+  }
+
+  function alertacorta(fuerte, debil) {
+    var nuevoElemento = $(`<div class="alert alert-info ms-3 esperanza popup">
+    <strong>${fuerte}</strong> ${debil}
+  </div>`);
+    nuevoElemento.appendTo('#alertas');
+    setTimeout(function () {
+      nuevoElemento.remove();
+    }, 3000);
   }
 
   function actualizar(numero) {
@@ -356,7 +367,7 @@ $(document).ready(function () {
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 
                 <div class="col-10">
-                  <button  id="q${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar"  data-id='${N}';>
+                  <button  id="q${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar" data-op='1' data-id='${N}';>
                     <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Sumar
                     </h5></div>
                   </button>
@@ -370,7 +381,7 @@ $(document).ready(function () {
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 
                 <div class="col-10">
-                  <button  id="r${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar"  data-id='${N}';>
+                  <button  id="r${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar" data-op='2' data-id='${N}';>
                     <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Restar
                     </h5></div>
                   </button>
@@ -384,7 +395,7 @@ $(document).ready(function () {
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 
                 <div class="col-10">
-                  <button  id="s${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar"  data-id='${N}';>
+                  <button  id="s${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar" data-op='3' data-id='${N}';>
                     <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Multiplicar
                     </h5></div>
                   </button>
@@ -398,8 +409,8 @@ $(document).ready(function () {
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 
                 <div class="col-10">
-                  <button  id="t${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar" data-id='${N}';>
-                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Dividir
+                  <button  id="t${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza filtro1" data-id='${N}';>
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Filtro del 1
                     </h5></div>
                   </button>
                 </div>
@@ -412,7 +423,7 @@ $(document).ready(function () {
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 
                 <div class="col-10">
-                  <button  id="u${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
+                  <button  id="u${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza integrar" data-id='${N}';>
                     <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Integrar
                     </h5></div>
                   </button>
@@ -426,7 +437,7 @@ $(document).ready(function () {
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 
                 <div class="col-10">
-                  <button  id="v${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza">
+                  <button  id="v${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza diferenciar" data-id='${N}';>
                     <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Diferenciar
                     </h5></div>
                   </button>
@@ -440,8 +451,8 @@ $(document).ready(function () {
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 
                 <div class="col-10">
-                  <button  id="w${N}" class="btn btn-primary text-white mi-input rounded-5 w-100 mb-2 esperanza">
-                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Operar
+                  <button  id="w${N}" class="btn btn-primary text-white mi-input rounded-5 w-100 mb-2 esperanza operar2" data-id='${N}';>
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Elegir
                     </h5></div>
                   </button>
                 </div>
@@ -514,14 +525,14 @@ $(document).ready(function () {
                     data-id='${N}';
                     data-tipo='${T}';
                     data-nombre='${nombre}';
-                    id="l${N}">
+                    id="update${N}">
                 </i>
             </div>
             <div class="col-5 mt-2 mb-2 d-flex h-100 align-items-center justify-content-start">
                 <i
                     class="fa-solid fa-bomb fa-3x px-4 rounded-4 iblanco eliminar"
                     data-id='${N}';
-                    id="n${N}">
+                    id="delete${N}">
                 </i>
             </div>
 
@@ -550,32 +561,103 @@ $(document).ready(function () {
     $("#chunche" + id).addClass("bg-dark");
   }
 
-  function iniciarop(id) {
+  function desactivarcambios() {
+    var i = 2;
+    while (i < (conteo + 1)) {
+      const ids = ["delete", "update"];
+      for (const idPrefix of ids) {
+        const element = $("#" + idPrefix + i);
+        if (!element.hasClass("d-none")) {
+          element.addClass("d-none");
+        }
+      }
+      i++;
+    }
+
+    $("#modo1").addClass("d-none");
+    $("#modo2").addClass("d-none");
+    $("#modo3").addClass("d-none");
+    $("#extra").addClass("d-none");
+
+  }
+
+  function activarcambios() {
+    var i = 2;
+    while (i < (conteo + 1)) {
+      const ids = ["delete", "update"];
+      for (const idPrefix of ids) {
+        const element = $("#" + idPrefix + i);
+        if (element.hasClass("d-none")) {
+          element.removeClass("d-none");
+        }
+      }
+      i++;
+    }
+
+    $("#modo1").removeClass("d-none");
+    $("#modo2").removeClass("d-none");
+    $("#modo3").removeClass("d-none");
+    $("#extra").removeClass("d-none");
+
+  }
+
+  function iniciarop(id, oper) {
+    const operaciones = {
+      1: "Sumando!",
+      2: "Restando!",
+      3: "Multiplicando!",
+    };
     elegir(id);
     cambiarmodo(4);
     $("#ww" + id).addClass("d-none");
-    sliders(id,14);
+    sliders(id, 14);
+    op1 = id;
+    opsign = oper;
+    desactivarcambios();
+    var nuevoElemento = $(`<div id="avisomodo" class="alert alert-info ms-5 esperanza pulse fadein">
+    <strong>${operaciones[opsign]}</strong> Elija la señal 2
+  </div>`);
+    nuevoElemento.appendTo('#alertas');
   }
 
-  function operar(op) {
+  function terminarop(id) {
+    deselegir(id)
+    cambiarmodo(3);
+    activarcambios();
+    $("#avisomodo").remove();
+  }
+
+  function operar() {
+
     const operaciones = {
       1: "Suma",
       2: "Resta",
       3: "Multiplicación",
-      4: "División",
     };
+
+    alert(op1);
+    alert(op2);
+    alert(opsign);
 
     $.ajax({
       url: "/urias",
       data: {
-        nombre: operaciones[op],
-        tipo: op,
+        nombre: operaciones[opsign],
+        tipo: opsign,
         id1: op1,
         id2: op2,
       },
       type: "POST",
       success: function (response) {
-
+        Swal.fire({
+          title: "Operación realizada!",
+          confirmButtonColor: "#237bff",
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: "#258eff",
+          icon: "success",
+          button: "Aceptar",
+        });
       },
       error: function (error) {
         console.log(error);
@@ -850,14 +932,17 @@ $(document).ready(function () {
   });
 
   $(document).on("click", ".operar", function () {
-    var numero = $(this).attr("data-id");
-    iniciarop(numero);
+    iniciarop($(this).attr("data-id"), $(this).attr("data-op"));
+  });
+
+  $(document).on("click", ".operar2", function () {
+    op2 = $(this).attr("data-id");
+    operar();
+    terminarop(op1);
   });
 
   $(document).on("click", ".desoperar", function () {
-    var numero = $(this).attr("data-id");
-    deselegir(numero)
-    cambiarmodo(3);
+    terminarop($(this).attr("data-id"));
   });
 
 
