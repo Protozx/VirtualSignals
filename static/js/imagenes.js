@@ -12,6 +12,9 @@ $(document).ready(function () {
   var colorog = "#d400e7";
   var colorpr = "#3cff6d";
 
+  Pace.options = {
+    ajax: false
+  };
 
   $("#ingresarh").click(function () {
     window.location.href = "login.php";
@@ -98,6 +101,12 @@ $(document).ready(function () {
       type: "POST",
       processData: false,  
       contentType: false,
+      beforeSend: function() {
+        Pace.restart();
+      },
+      complete: function() {
+        Pace.stop();
+      },
       success: function (response) {
         Swal.fire({
           title: "Audio generado!",
@@ -163,6 +172,12 @@ $(document).ready(function () {
       url: filtros[filtro],
       data: { id: id, filtro: filtro },
       type: "POST",
+      beforeSend: function() {
+        Pace.restart();
+      },
+      complete: function() {
+        Pace.stop();
+      },
       success: function (response) {
         Swal.fire({
           title: "Transfomacion realizada!",
@@ -205,6 +220,12 @@ $(document).ready(function () {
       url: "/datos",
       data: datos,
       type: "POST",
+      beforeSend: function() {
+        Pace.restart();
+      },
+      complete: function() {
+        Pace.stop();
+      },
       success: function (response) {
         if (datos.continuidad == 0) {
           identificar(
@@ -882,6 +903,12 @@ $(document).ready(function () {
         id2: op2,
       },
       type: "POST",
+      beforeSend: function() {
+        Pace.restart();
+      },
+      complete: function() {
+        Pace.stop();
+      },
       success: function (response) {
         Swal.fire({
           title: "Operación realizada!",
@@ -1062,6 +1089,12 @@ $(document).ready(function () {
         fin: 100,
       },
       type: "POST",
+      beforeSend: function() {
+        Pace.restart();
+      },
+      complete: function() {
+        Pace.stop();
+      },
       success: function (response) {
         //alert(conteo);
         agregarElemento(conteo, elec, tipoe);
