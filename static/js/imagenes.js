@@ -7,10 +7,12 @@ $(document).ready(function () {
   var audioexiste = 0;
   let blob;
   let recorder;
+  let mediaStream;
   let audio = new Audio();
   var duracion = 0;
   var colorog = "#d400e7";
   var colorpr = "#3cff6d";
+
 
   Pace.options = {
     ajax: false
@@ -52,6 +54,7 @@ $(document).ready(function () {
 
   function startRecording() {
     navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      mediaStream = stream;  // Guardamos la stream para su posterior uso
       recorder = RecordRTC(stream, {
         type: 'audio',
         mimeType: 'audio/wav',
@@ -73,7 +76,8 @@ $(document).ready(function () {
         confirmButtonText: "Ok",
       });
     });
-  }
+}
+
 
 
   function stopAndStoreRecording() {
@@ -81,6 +85,7 @@ $(document).ready(function () {
       console.error('Ninguna grabación ha sido iniciada.');
       return;
     }
+    
 
     recorder.stopRecording(function () {
       blob = recorder.getBlob();
@@ -145,9 +150,14 @@ $(document).ready(function () {
       audio.src = url;
       audio.play();
       duracion = audio.duration * 1000;
-      recorder.stream.stop();
       recorder = null;
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+        mediaStream = null;  // Puedes ponerlo a null para asegurarte de que ya no se usará
+      }
     });
+
+
   }
 
   function alertacorta(fuerte, debil) {
@@ -1000,7 +1010,7 @@ $(document).ready(function () {
       1: ["dda", "bb", "cc", "dd", "mm", "ii", "jj", "kk"],
       2: ["ee", "ff", "cc", "ii", "jj", "kk"],
       3: ["aa", "gg", "hh", "cc", "ii", "jj", "kk"],
-      4: ["nn", "oo", "pp", "ii"],
+      4: ["ddi", "ddf", "nn", "oo", "pp", "ii"],
       5: ["dda", "qq", "rr", "ss", "tt", "uu", "vv", "ii"],
       6: ["ww"],
       7: ["xx"],
