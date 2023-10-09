@@ -4,10 +4,13 @@ $(document).ready(function () {
   var op2 = 0;
   var opsign = 0;
   var modo = 1;
+  var audioexiste = 0;
+  let blob;
   let recorder;
-  let audiosArray = [];
   let audio = new Audio();
   var duracion = 0;
+  var colorog = "#d400e7";
+  var colorpr = "#3cff6d";
 
 
   $("#ingresarh").click(function () {
@@ -23,6 +26,13 @@ $(document).ready(function () {
   function gettipo(numero) {
     var tipoid = "#update" + numero;
     return $(tipoid).attr("data-tipo");
+  }
+  function activaraudio() {
+    if (audioexiste == 0) {
+      $("#senal").append(`<option value="7">Voz humana</option>`);
+      audioexiste = 1;
+
+    };
   }
 
   function playAudio(audioblob) {
@@ -49,8 +59,16 @@ $(document).ready(function () {
       });
       recorder.startRecording();
     }).catch(function (err) {
-      alert('Error al obtener acceso al micrófono');
       Swal.close();
+      Swal.fire({
+        title: "Error al obtener acceso al microfono!",
+        confirmButtonColor: colorpr,
+        background: "#212529",
+        color: "#ffffff",
+        iconColor: colorpr,
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
     });
   }
 
@@ -62,10 +80,47 @@ $(document).ready(function () {
     }
 
     recorder.stopRecording(function () {
-      let blob = recorder.getBlob();
+      blob = recorder.getBlob();
       audiosArray.push(blob);
       recorder.stream.stop();
       recorder = null;
+    });
+  }
+
+  function mandarAudio(id) {
+    var formData = new FormData();
+    formData.append("id", id);
+    formData.append("audio", blob);
+    
+    $.ajax({
+      url: "/audio",
+      data: formData,
+      type: "POST",
+      processData: false,  
+      contentType: false,
+      success: function (response) {
+        Swal.fire({
+          title: "Audio generado!",
+          confirmButtonColor: colorpr,
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: colorpr,
+          icon: "success",
+          confirmButtonText: "Ok",
+        });
+
+      },
+      error: function (error) {
+        Swal.fire({
+          title: "Error ocurrido!",
+          confirmButtonColor: colorpr,
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: colorpr,
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
+      },
     });
   }
 
@@ -76,7 +131,7 @@ $(document).ready(function () {
     }
 
     recorder.stopRecording(function () {
-      let blob = recorder.getBlob();
+      blob = recorder.getBlob();
       let url = URL.createObjectURL(blob);
       audio.src = url;
       audio.play();
@@ -96,9 +151,56 @@ $(document).ready(function () {
     }, 3000);
   }
 
+  function filtrar(id, filtro) {
+    datos = datificar(id);
+    const filtros = {
+      1: "/filtrodel1",
+      2: "/integrar",
+      3: "/diferenciar",
+    };
+
+    $.ajax({
+      url: filtros[filtro],
+      data: { id: id, filtro: filtro },
+      type: "POST",
+      success: function (response) {
+        Swal.fire({
+          title: "Transfomacion realizada!",
+          confirmButtonColor: colorpr,
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: colorpr,
+          icon: "success",
+          confirmButtonText: "Ok",
+        });
+
+        identificar(
+          "/static/data/" + id + ".csv",
+          datos.color,
+          datos.destino,
+          "lines",
+          "scatter"
+        );
+
+      },
+      error: function (error) {
+        Swal.fire({
+          title: "Error ocurrido!",
+          confirmButtonColor: colorpr,
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: colorpr,
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
+      },
+    });
+
+
+  }
+
   function actualizar(numero) {
     let datos = datificar(numero);
-
     $.ajax({
       url: "/datos",
       data: datos,
@@ -123,14 +225,22 @@ $(document).ready(function () {
         }
       },
       error: function (error) {
-        console.log(error);
+        Swal.fire({
+          title: "Error ocurrido!",
+          confirmButtonColor: colorpr,
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: colorpr,
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
       },
     });
 
   }
 
   function datificar(numero) {
-    var amplitudid = "#a" + numero;
+    var amplitudid = "#da" + numero;
     var frecid = "#b" + numero;
     var muesid = "#c" + numero;
     var perioid = "#d" + numero;
@@ -143,7 +253,12 @@ $(document).ready(function () {
     var ang_faseid = "#h" + numero;
     var desplaid = "#m" + numero;
     var dest = "gra" + numero;
-    var tipoid = "#l" + numero;
+    var tipoid = "#update" + numero;
+    var esc_tiempoid = "#n" + numero;
+    var reflexionid = "#o" + numero;
+    var corrimientoid = "#p" + numero;
+    var inicioid = "#di" + numero;
+    var finid = "#df" + numero;
 
     return {
       amplitud: $(amplitudid).val(),
@@ -161,6 +276,11 @@ $(document).ready(function () {
       destino: dest,
       tipo: $(tipoid).attr("data-tipo"),
       id: numero,
+      esc_tiempo: $(esc_tiempoid).val(),
+      reflexion: $(reflexionid).val(),
+      corrimiento: $(corrimientoid).val(),
+      inicio: $(inicioid).val(),
+      fin: $(finid).val(),
     }
   }
 
@@ -184,13 +304,14 @@ $(document).ready(function () {
             type: tipo,
             line: {
               color: primario,
+              width: 4,
             },
             marker: {
               size: 10,
               color: primario,
               symbol: "o",
             },
-            width: 0.01,
+            width: 0.04,
           },
         ];
         var layout = {
@@ -237,6 +358,23 @@ $(document).ready(function () {
                 </div>
                 <div class="col-1">
                     <h6 class="text-white text-center mb-2"> 100 </h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="dda${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Amplitud
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2"> 1 </h6>
+                </div>
+                <div class="col-8">
+                    <input type="number" id="da${N}" min="1" max="1000" step="1" value="1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 libre">
+                </div>
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2"> 1000 </h6>
                 </div>
             </div>
         </div>
@@ -428,6 +566,40 @@ $(document).ready(function () {
             </div>
         </div>
 
+        <div class="container-fluid mt-5 mb-4 d-none" id="ddi${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Inicio
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2"> 1% </h6>
+                </div>
+                <div class="col-8">
+                    <input type="number" id="di${N}" min="1" max="50" step="0.1" value="1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 libre">
+                </div>
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2"> 50% </h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="ddf${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Fin
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2"> 51% </h6>
+                </div>
+                <div class="col-8">
+                    <input type="number" id="df${N}" min="51" max="100" step="0.1" value="100"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 libre">
+                </div>
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2"> 100% </h6>
+                </div>
+            </div>
+        </div>
+
         <div class="container-fluid mt-5 mb-4 d-none" id="qq${N}">    
             
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
@@ -543,7 +715,7 @@ $(document).ready(function () {
         <div class="container-fluid mt-5 mb-4 d-none" id="ii${N}">    
             <h5 class="text-white text-center mt-2 mb-4">Color
             </h5>
-            <input type="color" id="i${N}" value="#00fffb"
+            <input type="color" id="i${N}" value="${colorog}"
                         class="form-control mi-input custom-input rounded-5 mb-2 ojo">
         </div>
 
@@ -713,16 +885,24 @@ $(document).ready(function () {
       success: function (response) {
         Swal.fire({
           title: "Operación realizada!",
-          confirmButtonColor: "#237bff",
+          confirmButtonColor: colorpr,
           background: "#212529",
           color: "#ffffff",
-          iconColor: "#258eff",
+          iconColor: colorpr,
           icon: "success",
           button: "Aceptar",
         });
       },
       error: function (error) {
-        console.log(error);
+        Swal.fire({
+          title: "Error ocurrido!",
+          confirmButtonColor: colorpr,
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: colorpr,
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
       },
     });
 
@@ -733,7 +913,7 @@ $(document).ready(function () {
     var cam = 1;
 
     while (i < (conteo + 1)) {
-      const ids = ["aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "mm", "nn", "oo", "pp", "qq", "rr", "ss", "tt", "uu", "vv", "ww", "xx"];
+      const ids = ["aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "mm", "nn", "oo", "pp", "qq", "rr", "ss", "tt", "uu", "vv", "ww", "xx", "dda", "ddi", "ddf"];
       for (const idPrefix of ids) {
         const element = $("#" + idPrefix + i);
         if (!element.hasClass("d-none")) {
@@ -781,6 +961,8 @@ $(document).ready(function () {
       4: 2,
       5: 2,
       6: 3,
+      7: 8,
+      8: 8,
       11: 4,
       12: 5,
       13: 6,
@@ -788,13 +970,14 @@ $(document).ready(function () {
     };
 
     const grafToIds = {
-      1: ["aa", "bb", "cc", "dd", "mm", "ii", "jj", "kk"],
+      1: ["dda", "bb", "cc", "dd", "mm", "ii", "jj", "kk"],
       2: ["ee", "ff", "cc", "ii", "jj", "kk"],
       3: ["aa", "gg", "hh", "cc", "ii", "jj", "kk"],
       4: ["nn", "oo", "pp", "ii"],
-      5: ["aa", "qq", "rr", "ss", "tt", "uu", "vv", "ii"],
+      5: ["dda", "qq", "rr", "ss", "tt", "uu", "vv", "ii"],
       6: ["ww"],
       7: ["xx"],
+      8: ["ddi", "ddf", "ii"]
     };
 
     const graf = tipoToGraf[tipo];
@@ -836,6 +1019,12 @@ $(document).ready(function () {
       case 6:
         tipoe = "Senoidal";
         break;
+      case 7:
+        tipoe = "Audio";
+        break;
+      case 8:
+        tipoe = "Resultado";
+        break;
     }
     return tipoe
   }
@@ -844,10 +1033,12 @@ $(document).ready(function () {
     conteo = conteo + 1;
     var destino = "gra" + conteo;
     var elec = parseInt($("#senal").val());
-    var tipoe = getnombre(elec);
+    var tipoe = "" + (conteo - 1) + "- " + getnombre(elec);
 
-    agregarElemento(conteo, elec, tipoe);
-    sliders(conteo, elec);
+    if (elec == 7) {
+      mandarAudio(conteo);
+    }
+
     $.ajax({
       url: "/datos",
       data: {
@@ -864,29 +1055,46 @@ $(document).ready(function () {
         continuidad: 0,
         tipo: elec,
         id: conteo,
+        esc_tiempo: 0,
+        reflexion: 0,
+        corrimiento: 0,
+        inicio: 1,
+        fin: 100,
       },
       type: "POST",
       success: function (response) {
         //alert(conteo);
+        agregarElemento(conteo, elec, tipoe);
+        cambiarmodo(modo);
         identificar(
           "/static/data/" + conteo + ".csv",
-          "#00FFFB",
+          colorog,
           destino,
           "lines",
           "scatter"
         );
       },
       error: function (error) {
-        console.log(error);
+        Swal.fire({
+          title: "Error ocurrido!",
+          confirmButtonColor: colorpr,
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: colorpr,
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
       },
     });
   });
 
-  $(document).on("mouseenter", ".pulsblue", function () {
-    $(this).addClass("btn-primary pulse");
-  }).on("mouseleave", ".pulsblue", function () {
-    $(this).removeClass("btn-primary pulse");
-  });
+  $(document)
+    .on("mouseenter", ".pulsblue", function () {
+      $(this).addClass("btn-primary pulse");
+    })
+    .on("mouseleave", ".pulsblue", function () {
+      $(this).removeClass("btn-primary pulse");
+    });
 
   $(document)
     .on("mouseenter", ".pulsred", function () {
@@ -955,9 +1163,9 @@ $(document).ready(function () {
     startRecording();
     Swal.fire({
       title: "Grabando...",
-      iconColor: "#258eff",
+      iconColor: colorpr,
       icon: "warning",
-      confirmButtonColor: "#237bff",
+      confirmButtonColor: colorpr,
       background: "#212529",
       color: "#ffffff",
       showDenyButton: true,
@@ -968,6 +1176,7 @@ $(document).ready(function () {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         stopAndPlayRecording();
+        activaraudio();
         console.log(duracion);
 
 
@@ -987,6 +1196,7 @@ $(document).ready(function () {
       nuevoElemento.remove();
     }, 3000);
     cambiarmodo(1);
+    modo = 1;
   });
 
   $(document).on("click", "#modo2", function () {
@@ -998,6 +1208,7 @@ $(document).ready(function () {
       nuevoElemento.remove();
     }, 3000);
     cambiarmodo(2);
+    modo = 2;
   });
 
 
@@ -1010,9 +1221,10 @@ $(document).ready(function () {
       nuevoElemento.remove();
     }, 3000);
     cambiarmodo(3);
+    modo = 3;
   });
 
-  $(document).on("input", ".libre", function () {
+  $(document).on("blur", ".libre", function () {
     var valor = parseFloat($(this).val());
     if (isNaN(valor) || valor < $(this).attr('min')) {
       $(this).val($(this).attr('min'));
@@ -1035,6 +1247,21 @@ $(document).ready(function () {
     terminarop($(this).attr("data-id"));
   });
 
+  $(document).on("click", ".integrar", function () {
+    id = $(this).attr("data-id");
+    filtrar(id, 2);
+  });
+
+  $(document).on("click", ".diferenciar", function () {
+    id = $(this).attr("data-id");
+    filtrar(id, 3);
+  });
+
+  $(document).on("click", ".filtro1", function () {
+    id = $(this).attr("data-id");
+    filtrar(id, 1);
+  });
+
 
 
   audio.addEventListener('loadedmetadata', function () {
@@ -1050,7 +1277,7 @@ $(document).ready(function () {
       allowOutsideClick: false, // No permite cerrar la alerta haciendo clic fuera de ella
       allowEscapeKey: false,
       background: "#212529",
-      color: "#ffffff",
+      color: colorpr,
 
     });
   });
