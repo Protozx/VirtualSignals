@@ -1,0 +1,375 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+"""
+def generar_cuadrada(amplitud, periodo, muestration, desplazamiento, inicio, fin):
+    
+    # Crea un arreglo de tiempo desde 'inicio' hasta 'fin'
+    t = np.linspace(inicio, fin, muestration, endpoint=False)
+    
+    # Inicializa un arreglo vacío para la señal
+    cuadrada = np.zeros(muestration)
+    
+    # Genera la señal escalón unitario periódica
+    for i in range(muestration):
+        t_actual = t[i]
+        # Calcula la posición relativa en el periodo
+        posicion_rel = (t_actual - desplazamiento) % periodo
+        # Asigna el valor del escalón unitario
+        if posicion_rel < periodo / 2:
+            cuadrada[i] = amplitud
+        else:
+            cuadrada[i] = 0.0
+    
+    return t, cuadrada
+
+# Parámetros de entrada
+amplitud = 1.0
+periodo = 4.0
+num_muestras = 1000
+desplazamiento = 0
+inicio = -1
+fin = 6
+
+# Genera la señal escalón unitario periódica
+t, signal = generar_cuadrada(amplitud, periodo, num_muestras, desplazamiento, inicio, fin)
+
+# Grafica la señal
+plt.plot(t, signal)
+plt.xlabel('Tiempo')
+plt.ylabel('Amplitud')
+plt.title('Señal Escalón Unitario Periódica')
+plt.grid(True)
+plt.show()"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def generador_de_impulsos(amplitud, periodo, num_muestras, desplazamiento, inicio, fin):
+    # Crear un arreglo de tiempo con las muestras
+    tiempo = np.linspace(inicio, fin, num_muestras)
+    
+    # Inicializar la señal con valores en cero
+    señal = np.zeros_like(tiempo)
+    
+    # Calcular el intervalo entre muestras
+    intervalo = (fin - inicio) / num_muestras
+    
+    # Calcular el valor del impulso en el instante de tiempo deseado
+    valor_impulso = amplitud
+    
+    # Crear impulsos en los instantes de tiempo correspondientes
+    for i in range(num_muestras):
+        t = tiempo[i]
+        if (t - desplazamiento) % periodo < intervalo:
+            señal[i] = valor_impulso
+    
+    return tiempo, señal
+
+# Parámetros de ejemplo
+amplitud = 1.0
+periodo = 1
+num_muestras = 1000
+desplazamiento = 0
+inicio = -5.0  # Puedes ajustar el inicio negativo aquí
+fin = 20.0
+
+# Generar la señal de impulsos
+tiempo, señal = generador_de_impulsos(amplitud, periodo, num_muestras, desplazamiento, inicio, fin)
+
+# Graficar la señal
+plt.plot(tiempo, señal)
+plt.xlabel('Tiempo')
+plt.ylabel('Amplitud')
+plt.title('Señal de Impulsos')
+plt.grid(True)
+plt.show()
+
+
+
+
+
+"""def generador_dientes_de_sierra(amplitud, periodo, num_muestras, desplazamiento, inicio, fin):
+    # Calcula el intervalo de tiempo entre muestras
+    dt = (fin - inicio) / num_muestras
+    
+    # Crea un arreglo de tiempo desde 'inicio' hasta 'fin'
+    t = np.linspace(inicio, fin, num_muestras, endpoint=False)
+    
+    # Inicializa un arreglo vacío para la señal
+    signal = np.zeros(num_muestras)
+    
+    # Genera la señal de dientes de sierra
+    for i in range(num_muestras):
+        t_actual = t[i]
+        # Calcula la posición relativa en el periodo
+        posicion_rel = (t_actual - desplazamiento) % periodo
+        # Calcula el valor del diente de sierra en el instante de tiempo
+        signal[i] = (2 * amplitud / periodo) * (posicion_rel - periodo / 2)
+    
+    return t, signal
+
+# Parámetros de entrada
+amplitud = 1.0
+periodo = 4.0
+num_muestras = 1000
+desplazamiento = 1.0
+inicio = 0.0
+fin = 10.0
+
+# Genera la señal de dientes de sierra
+t, signal = generador_dientes_de_sierra(amplitud, periodo, num_muestras, desplazamiento, inicio, fin)
+
+# Grafica la señal
+plt.plot(t, signal)
+plt.xlabel('Tiempo')
+plt.ylabel('Amplitud')
+plt.title('Señal Dientes de Sierra')
+plt.grid(True)
+plt.show()"""
+
+
+"""def generador_señal_triangular(amplitud, periodo, num_muestras, desplazamiento, inicio, fin):
+    # Calcula el intervalo de tiempo entre muestras
+    dt = (fin - inicio) / num_muestras
+    
+    # Crea un arreglo de tiempo desde 'inicio' hasta 'fin'
+    t = np.linspace(inicio, fin, num_muestras, endpoint=False)
+    
+    # Inicializa un arreglo vacío para la señal
+    signal = np.zeros(num_muestras)
+    
+    # Genera la señal triangular
+    for i in range(num_muestras):
+        t_actual = t[i]
+        # Calcula la posición relativa en el periodo
+        posicion_rel = (t_actual - desplazamiento) % periodo
+        
+        # Calcula el valor de la señal triangular en el instante de tiempo
+        if posicion_rel < periodo / 2:
+            signal[i] = (4 * amplitud / periodo) * posicion_rel - amplitud
+        else:
+            signal[i] = (-4 * amplitud / periodo) * posicion_rel + 3 * amplitud
+    
+    return t, signal
+
+# Parámetros de entrada
+amplitud = 1.0
+periodo = 4.0
+num_muestras = 1000
+desplazamiento = 1.0
+inicio = 0.0
+fin = 10.0
+
+# Genera la señal triangular
+t, signal = generador_señal_triangular(amplitud, periodo, num_muestras, desplazamiento, inicio, fin)
+
+# Grafica la señal
+plt.plot(t, signal)
+plt.xlabel('Tiempo')
+plt.ylabel('Amplitud')
+plt.title('Señal Triangular')
+plt.grid(True)
+plt.show()"""
+
+
+"""import numpy as np
+import matplotlib.pyplot as plt
+
+def generador_valor_absoluto_del_seno(amplitud, periodo, num_muestras, desplazamiento, inicio, fin):
+    # Calcula el intervalo de tiempo entre muestras
+    dt = (fin - inicio) / num_muestras
+    
+    # Crea un arreglo de tiempo desde 'inicio' hasta 'fin'
+    t = np.linspace(inicio, fin, num_muestras, endpoint=False)
+    
+    # Inicializa un arreglo vacío para la señal
+    signal = np.zeros(num_muestras)
+    
+    # Genera la señal del valor absoluto del seno
+    for i in range(num_muestras):
+        t_actual = t[i]
+        # Calcula la posición relativa en el periodo
+        posicion_rel = (t_actual - desplazamiento) % periodo
+        # Calcula el valor absoluto del seno en el instante de tiempo
+        signal[i] = amplitud * abs(np.sin((2 * np.pi / periodo) * posicion_rel))
+        
+    return t, signal
+
+# Parámetros de entrada
+amplitud = 1.0/5
+periodo = 4.0
+num_muestras = 1000
+desplazamiento = 1.0
+inicio = 0.0
+fin = 4
+
+# Genera la señal del valor absoluto del seno
+t, signal = generador_valor_absoluto_del_seno(amplitud, periodo, num_muestras, desplazamiento, inicio, fin)
+
+# Grafica la señal
+plt.plot(t, signal)
+plt.xlabel('Tiempo')
+plt.ylabel('Amplitud')
+plt.title('Señal Valor Absoluto del Seno')
+plt.grid(True)
+plt.show()"""
+
+
+
+# ESCALÓN
+"""def generador_escalon_unitario(amplitud, muestreo, desplazamiento, inicio, fin):
+    # Crea un arreglo de tiempo desde 'inicio' hasta 'fin' con el paso de muestreo
+    t = np.linspace(inicio, fin, muestreo)
+    
+    # Inicializa un arreglo vacío para la señal
+    signal = np.zeros(len(t))
+    
+    # Genera la señal escalón unitario
+    for i in range(len(t)):
+        t_actual = t[i]
+        # Asigna el valor del escalón unitario en el instante de tiempo
+        if t_actual >= desplazamiento:
+            signal[i] = amplitud
+    
+    return t, signal
+
+# Parámetros de entrada
+amplitud = 1.0
+muestreo = 1000  # Paso de muestreo
+desplazamiento = -2
+inicio = -5
+fin = 5.0
+
+# Genera la señal escalón unitario
+t, signal = generador_escalon_unitario(amplitud, muestreo, desplazamiento, inicio, fin)
+
+# Grafica la señal
+plt.plot(t, signal)
+plt.xlabel('Tiempo')
+plt.ylabel('Amplitud')
+plt.title('Señal Escalón Unitario')
+plt.grid(True)
+plt.show()"""
+
+
+# IMPULSO UNITARIO
+"""import numpy as np
+import matplotlib.pyplot as plt
+
+def generador_impulsos_unitarios(amplitud, muestreo, desplazamiento, inicio, fin):
+    # Crea un arreglo de tiempo desde 'inicio' hasta 'fin' con el paso de muestreo
+    t = np.linspace(inicio, fin , muestreo)
+    
+    # Inicializa un arreglo vacío para la señal
+    signal = np.zeros(len(t))
+    
+    signal[int((desplazamiento-inicio)*muestreo/(fin-inicio))] = amplitud
+    
+    return t, signal
+
+# Parámetros de entrada
+amplitud = 7
+muestreo = 1000  # Paso de muestreo como un número entero
+desplazamiento = 2
+inicio = -3
+fin = 5.0
+
+# Genera la señal de impulsos unitarios
+t, signal = generador_impulsos_unitarios(amplitud, muestreo, desplazamiento, inicio, fin)
+
+# Grafica la señal
+plt.plot(t, signal)
+plt.xlabel('Tiempo')
+plt.ylabel('Amplitud')
+plt.title('Señal de Impulsos Unitarios (Vertical)')
+plt.grid(True)
+plt.show()"""
+
+# IMPULSO TRIANGULAR
+"""import numpy as np
+import matplotlib.pyplot as plt
+
+def generador_impulso_triangular(amplitud, num_muestras, desplazamiento, inicio, fin):
+    # Crea un arreglo de tiempo con 'num_muestras'
+    t = np.linspace(inicio, fin, num_muestras)
+    
+    # Inicializa un arreglo vacío para la señal
+    signal = np.zeros(len(t))
+    
+    # Genera el impulso triangular
+    for i in range(len(t)):
+        t_actual = t[i]
+        # Calcula la posición relativa en el impulso triangular
+        posicion_rel = t_actual - desplazamiento
+        
+        # Calcula el valor del impulso triangular en el instante de tiempo
+        if abs(posicion_rel) <= amplitud / 2:
+            signal[i] = 1 - 2 * abs(posicion_rel) / amplitud
+        else:
+            signal[i] = 0
+    
+    return t, signal
+
+# Parámetros de entrada
+amplitud = 1.0
+num_muestras = 100  # Número de muestras como un número entero
+desplazamiento = 2.0
+inicio = 0.0
+fin = 5.0
+
+# Genera el impulso triangular
+t, signal = generador_impulso_triangular(amplitud, num_muestras, desplazamiento, inicio, fin)
+
+# Grafica el impulso triangular
+plt.plot(t, signal)
+plt.xlabel('Tiempo')
+plt.ylabel('Amplitud')
+plt.title('Impulso Triangular')
+plt.grid(True)
+plt.show()"""
+
+
+
+"""import numpy as np
+import matplotlib.pyplot as plt
+
+def generador_rampa(amplitud, num_muestras, desplazamiento, inicio, fin):
+    # Crea un arreglo de tiempo con 'num_muestras'
+    t = np.linspace(inicio, fin, num_muestras)
+    
+    # Inicializa un arreglo vacío para la señal
+    signal = np.zeros(len(t))
+    
+    # Genera la señal de rampa
+    for i in range(len(t)):
+        t_actual = t[i]
+        # Calcula la posición relativa en la rampa
+        posicion_rel = t_actual - desplazamiento
+        
+        # Calcula el valor de la rampa en el instante de tiempo
+        if posicion_rel >= 0:
+            signal[i] = amplitud * posicion_rel
+    
+    return t, signal
+
+# Parámetros de entrada
+amplitud = 1.0
+num_muestras = 1000  # Número de muestras como un número entero
+desplazamiento = -3
+inicio = -5
+fin = 5.0
+
+# Genera la señal de rampa
+t, signal = generador_rampa(amplitud, num_muestras, desplazamiento, inicio, fin)
+
+# Grafica la señal de rampa
+plt.plot(t, signal)
+plt.xlabel('Tiempo')
+plt.ylabel('Amplitud')
+plt.title('Señal de Rampa')
+plt.grid(True)
+plt.show()
+"""
+
+

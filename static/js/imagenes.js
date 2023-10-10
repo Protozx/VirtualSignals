@@ -13,9 +13,8 @@ $(document).ready(function () {
   var colorog = "#d400e7";
   var colorpr = "#3cff6d";
 
-
   Pace.options = {
-    ajax: false
+    ajax: false,
   };
 
   $("#ingresarh").click(function () {
@@ -32,17 +31,21 @@ $(document).ready(function () {
     var tipoid = "#update" + numero;
     return $(tipoid).attr("data-tipo");
   }
+
   function activaraudio() {
     if (audioexiste == 0) {
       $("#senal").append(`<option value="7">Voz humana</option>`);
       audioexiste = 1;
-
-    };
+    }
   }
 
   function playAudio(audioblob) {
     audio.src = URL.createObjectURL(audioblob);
     audio.play();
+  }
+
+  function validar(){
+    console.log("urias");
   }
 
   function stopAudio() {
@@ -52,40 +55,41 @@ $(document).ready(function () {
     }
   }
 
+
   function startRecording() {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
-      mediaStream = stream;  // Guardamos la stream para su posterior uso
-      recorder = RecordRTC(stream, {
-        type: 'audio',
-        mimeType: 'audio/wav',
-        sampleRate: 44100,
-        bufferSize: 16384,
-        numberOfAudioChannels: 1,
-        recorderType: RecordRTC.StereoAudioRecorder
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(function (stream) {
+        mediaStream = stream; // Guardamos la stream para su posterior uso
+        recorder = RecordRTC(stream, {
+          type: "audio",
+          mimeType: "audio/wav",
+          sampleRate: 44100,
+          bufferSize: 16384,
+          numberOfAudioChannels: 1,
+          recorderType: RecordRTC.StereoAudioRecorder,
+        });
+        recorder.startRecording();
+      })
+      .catch(function (err) {
+        Swal.close();
+        Swal.fire({
+          title: "Error al obtener acceso al microfono!",
+          confirmButtonColor: colorpr,
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: colorpr,
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
       });
-      recorder.startRecording();
-    }).catch(function (err) {
-      Swal.close();
-      Swal.fire({
-        title: "Error al obtener acceso al microfono!",
-        confirmButtonColor: colorpr,
-        background: "#212529",
-        color: "#ffffff",
-        iconColor: colorpr,
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    });
-}
-
-
+  }
 
   function stopAndStoreRecording() {
     if (!recorder) {
-      console.error('Ninguna grabación ha sido iniciada.');
+      console.error("Ninguna grabación ha sido iniciada.");
       return;
     }
-    
 
     recorder.stopRecording(function () {
       blob = recorder.getBlob();
@@ -99,17 +103,17 @@ $(document).ready(function () {
     var formData = new FormData();
     formData.append("id", id);
     formData.append("audio", blob);
-    
+
     $.ajax({
       url: "/audio",
       data: formData,
       type: "POST",
-      processData: false,  
+      processData: false,
       contentType: false,
-      beforeSend: function() {
+      beforeSend: function () {
         Pace.restart();
       },
-      complete: function() {
+      complete: function () {
         Pace.stop();
       },
       success: function (response) {
@@ -122,7 +126,6 @@ $(document).ready(function () {
           icon: "success",
           confirmButtonText: "Ok",
         });
-
       },
       error: function (error) {
         Swal.fire({
@@ -140,7 +143,7 @@ $(document).ready(function () {
 
   function stopAndPlayRecording() {
     if (!recorder) {
-      console.error('Ninguna grabación ha sido iniciada.');
+      console.error("Ninguna grabación ha sido iniciada.");
       return;
     }
 
@@ -152,76 +155,128 @@ $(document).ready(function () {
       duracion = audio.duration * 1000;
       recorder = null;
       if (mediaStream) {
-        mediaStream.getTracks().forEach(track => track.stop());
-        mediaStream = null;  // Puedes ponerlo a null para asegurarte de que ya no se usará
+        mediaStream.getTracks().forEach((track) => track.stop());
+        mediaStream = null; // Puedes ponerlo a null para asegurarte de que ya no se usará
       }
     });
-
-
   }
 
   function alertacorta(fuerte, debil) {
     var nuevoElemento = $(`<div class="alert alert-info ms-3 esperanza popup">
     <strong>${fuerte}</strong> ${debil}
   </div>`);
-    nuevoElemento.appendTo('#alertas');
+    nuevoElemento.appendTo("#alertas");
     setTimeout(function () {
       nuevoElemento.remove();
     }, 3000);
   }
 
   function filtrar(id, filtro) {
+    conteo = conteo + 1;
     datos = datificar(id);
     const filtros = {
       1: "/filtrodel1",
       2: "/integrar",
       3: "/diferenciar",
+      8: "/reflexion",
     };
 
-    $.ajax({
-      url: filtros[filtro],
-      data: { id: id, filtro: filtro },
-      type: "POST",
-      beforeSend: function() {
-        Pace.restart();
-      },
-      complete: function() {
-        Pace.stop();
-      },
-      success: function (response) {
-        Swal.fire({
-          title: "Transfomacion realizada!",
-          confirmButtonColor: colorpr,
-          background: "#212529",
-          color: "#ffffff",
-          iconColor: colorpr,
-          icon: "success",
-          confirmButtonText: "Ok",
-        });
-
-        identificar(
-          "/static/data/" + id + ".csv",
-          datos.color,
-          datos.destino,
-          "lines",
-          "scatter"
-        );
-
-      },
-      error: function (error) {
-        Swal.fire({
-          title: "Error ocurrido!",
-          confirmButtonColor: colorpr,
-          background: "#212529",
-          color: "#ffffff",
-          iconColor: colorpr,
-          icon: "error",
-          confirmButtonText: "Ok",
-        });
-      },
-    });
+    const nombres = {
+      1: "filtrodel1",
+      2: "integrar",
+      3: "diferenciar",
+      8: "reflexion",
+    };
 
 
+    if(filtro == 8){
+      $.ajax({
+        url: filtros[filtro],
+        data: { id: id, filtro: nombres[filtro], idintegral: (conteo)},
+        type: "POST",
+        beforeSend: function () {
+          Pace.restart();
+        },
+        complete: function () {
+          Pace.stop();
+        },
+        success: function (response) {
+          Swal.fire({
+            title: "Transfomacion realizada!",
+            confirmButtonColor: colorpr,
+            background: "#212529",
+            color: "#ffffff",
+            iconColor: colorpr,
+            icon: "success",
+            confirmButtonText: "Ok",
+          });
+          identificar(
+            "/static/data/" + id + ".csv",
+            colorog,
+            ("gra" + id),
+            "markers",
+            "scatter"
+          );
+        },
+        error: function (error) {
+          Swal.fire({
+            title: "Error ocurrido!",
+            confirmButtonColor: colorpr,
+            background: "#212529",
+            color: "#ffffff",
+            iconColor: colorpr,
+            icon: "error",
+            confirmButtonText: "Ok",
+          });
+        },
+      });
+    } else {
+      $.ajax({
+        url: filtros[filtro],
+        data: { id: id, filtro: nombres[filtro], idintegral: (conteo)},
+        type: "POST",
+        beforeSend: function () {
+          Pace.restart();
+        },
+        complete: function () {
+          Pace.stop();
+        },
+        success: function (response) {
+          Swal.fire({
+            title: "Transfomacion realizada!",
+            confirmButtonColor: colorpr,
+            background: "#212529",
+            color: "#ffffff",
+            iconColor: colorpr,
+            icon: "success",
+            confirmButtonText: "Ok",
+          });
+  
+          agregarElemento(conteo, 100, (conteo + "- " + "Resultado"));
+          cambiarmodo(modo);
+          identificar(
+            "/static/data/" + conteo + ".csv",
+            colorog,
+            ("gra" + conteo),
+            "markers",
+            "scatter"
+          );
+        },
+        error: function (error) {
+          Swal.fire({
+            title: "Error ocurrido!",
+            confirmButtonColor: colorpr,
+            background: "#212529",
+            color: "#ffffff",
+            iconColor: colorpr,
+            icon: "error",
+            confirmButtonText: "Ok",
+          });
+        },
+      });
+    }
+
+    
   }
 
   function actualizar(numero) {
@@ -230,10 +285,10 @@ $(document).ready(function () {
       url: "/datos",
       data: datos,
       type: "POST",
-      beforeSend: function() {
+      beforeSend: function () {
         Pace.restart();
       },
-      complete: function() {
+      complete: function () {
         Pace.stop();
       },
       success: function (response) {
@@ -242,7 +297,7 @@ $(document).ready(function () {
             "/static/data/" + numero + ".csv",
             datos.color,
             datos.destino,
-            "lines",
+            "markers",
             "scatter"
           );
         } else {
@@ -267,11 +322,57 @@ $(document).ready(function () {
         });
       },
     });
+  }
 
+  function actualizar2(numero) {
+    let datos2 = datificar2(numero);
+    let datos = datificar(numero);
+    $.ajax({
+      url: "/cortito",
+      data: datos2,
+      type: "POST",
+      beforeSend: function () {
+        Pace.restart();
+      },
+      complete: function () {
+        Pace.stop();
+      },
+      success: function (response) {
+        if (datos.continuidad == 0) {
+          identificar(
+            "/static/data/" + numero + ".csv",
+            datos.color,
+            datos.destino,
+            "markers",
+            "scatter"
+          );
+        } else {
+          identificar(
+            "/static/data/" + numero + ".csv",
+            datos.color,
+            datos.destino,
+            "markers",
+            "bar"
+          );
+        }
+      },
+      error: function (error) {
+        Swal.fire({
+          title: "Error ocurrido!",
+          confirmButtonColor: colorpr,
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: colorpr,
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
+      },
+    });
   }
 
   function datificar(numero) {
     var amplitudid = "#da" + numero;
+    var amplitudrealid = "#a" + numero;
     var frecid = "#b" + numero;
     var muesid = "#c" + numero;
     var perioid = "#d" + numero;
@@ -293,9 +394,10 @@ $(document).ready(function () {
 
     return {
       amplitud: $(amplitudid).val(),
+      amplitudreal: $(amplitudrealid).val(),
       frecuencia: $(frecid).val(),
       muestration: $(muesid).val(),
-      periodo: $(perioid).val(),
+      periodo: $(frecid).val(),
       sigma: $(sigmaid).val(),
       omega: $(omegaid).val(),
       frecuencia_angular: $(frec_angid).val(),
@@ -312,7 +414,23 @@ $(document).ready(function () {
       corrimiento: $(corrimientoid).val(),
       inicio: $(inicioid).val(),
       fin: $(finid).val(),
-    }
+    };
+  }
+
+  function datificar2(numero) {
+    var dest = "gra" + numero;
+    var tipoid = "#update" + numero;
+    var esc_tiempoid = "#n" + numero;
+    var reflexionid = "#o" + numero;
+    var corrimientoid = "#p" + numero;
+
+    return {
+      destino: dest,
+      tipo: $(tipoid).attr("data-tipo"),
+      id: numero,
+      esc_tiempo: $(esc_tiempoid).val(),
+      corrimiento: $(corrimientoid).val(),
+    };
   }
 
   function identificar(url, primario, destino, lineas, tipo) {
@@ -381,48 +499,48 @@ $(document).ready(function () {
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 1 </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
-                <div class="col-8">
-                    <input type="range" id="a${N}" min="1" max="100" value="1"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice">
+                <div class="col-9">
+                    <input type="range" id="a${N}" min="1" max="100" value="1" step="0.1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='a${N}';>
                 </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 100 </h6>
+                <div class="col-2">
+                    <h6 id="imga${N}" class="text-white text-center mb-2"> 1 </h6>
                 </div>
             </div>
         </div>
 
         <div class="container-fluid mt-5 mb-4 d-none" id="dda${N}">    
-            <h5 class="text-white text-center mt-2 mb-4">Amplitud
+            <h5 class="text-white text-center mt-2 mb-4">Escalamiento de amplitud
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 1 </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
-                <div class="col-8">
-                    <input type="number" id="da${N}" min="1" max="1000" step="1" value="1"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 libre">
+                <div class="col-9">
+                    <input type="range" id="da${N}" min="1" max="100" value="1" step="0.1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='da${N}';>
                 </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 1000 </h6>
+                <div class="col-2">
+                    <h6 id="imgda${N}" class="text-white text-center mb-2"> 1 </h6>
                 </div>
             </div>
         </div>
 
         <div class="container-fluid mt-5 mb-4 d-none" id="bb${N}">    
-            <h5 class="text-white text-center mt-2 mb-4">Frecuencia
+            <h5 class="text-white text-center mt-2 mb-4">Periodo
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 1 </h6>
+                    <h6 class="text-white text-center mb-2"> </h6>
                 </div>
-                <div class="col-8">
-                    <input type="range" id="b${N}" min="1" max="100" value="1"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice">
+                <div class="col-9">
+                    <input type="range" id="b${N}" min="0.1" max="100" value="0.1" step="0.1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='b${N}';>
                 </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 100 </h6>pr1nt
+                <div class="col-2">
+                    <h6 id="imgb${N}" class="text-white text-center mb-2"> 0.1 </h6>
                 </div>
             </div>
         </div>
@@ -432,31 +550,31 @@ $(document).ready(function () {
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 10 </h6>
+                    <h6 class="text-white text-center mb-2"> </h6>
                 </div>
-                <div class="col-8">
-                    <input type="range" id="c${N}" min="10" max="1000" value="1"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice">
+                <div class="col-9">
+                    <input type="range" id="c${N}" min="10" max="1000" value="1000" step="1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='c${N}';>
                 </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 900 </h6>
+                <div class="col-2">
+                    <h6 id="imgc${N}" class="text-white text-center mb-2"> 1000 </h6>
                 </div>
             </div>
         </div>
 
         <div class="container-fluid mt-5 mb-4 d-none" id="dd${N}">    
-            <h5 class="text-white text-center mt-2 mb-4">Periodo
+            <h5 class="text-white text-center mt-2 mb-4">Numero de periodos
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 1 </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
                 <div class="col-8">
                     <input type="range" id="d${N}" min="1" max="10" value="1"
                         class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice">
                 </div>
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 10 </h6>
+                    <h6 class="text-white text-center mb-2"> 1 </h6>
                 </div>
             </div>
         </div>
@@ -466,31 +584,31 @@ $(document).ready(function () {
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> -1 </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
-                <div class="col-8">
-                    <input type="range" id="e${N}" min="-100" max="100" value="0"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice">
+                <div class="col-9">
+                    <input type="range" id="e${N}" min="-1" max="1" value="-1" step="0.01"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='e${N}';>
                 </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 1 </h6>
+                <div class="col-2">
+                    <h6 id="imge${N}" class="text-white text-center mb-2"> -1 </h6>
                 </div>
             </div>
         </div>
-
+        
         <div class="container-fluid mt-5 mb-4 d-none" id="ff${N}">    
             <h5 class="text-white text-center mt-2 mb-4">Omega
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> -2 </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
-                <div class="col-8">
-                    <input type="range" id="f${N}" min="-200" max="200" value="0"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice">
+                <div class="col-9">
+                    <input type="range" id="f${N}" min="-2" max="2" value="-2" step="0.1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='f${N}';>
                 </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 2 </h6>
+                <div class="col-2">
+                    <h6 id="imgf${N}" class="text-white text-center mb-2"> -2 </h6>
                 </div>
             </div>
         </div>
@@ -500,14 +618,14 @@ $(document).ready(function () {
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 0 </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
-                <div class="col-8">
-                    <input type="range" id="g${N}" min="0" max="10" value="0"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice">
+                <div class="col-9">
+                    <input type="range" id="g${N}" min="-10" max="10" value="-10" step="0.1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='g${N}';>
                 </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 10 </h6>
+                <div class="col-2">
+                    <h6 id="imgg${N}" class="text-white text-center mb-2"> -10 </h6>
                 </div>
             </div>
         </div>
@@ -517,14 +635,14 @@ $(document).ready(function () {
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 0 </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
-                <div class="col-8">
-                    <input type="range" id="h${N}" min="0" max="10" value="0"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice">
+                <div class="col-9">
+                    <input type="range" id="h${N}" min="-10" max="10" value="-10" step="0.1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='h${N}';>
                 </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 10 </h6>
+                <div class="col-2">
+                    <h6 id="imgh${N}" class="text-white text-center mb-2"> -10 </h6>
                 </div>
             </div>
         </div>
@@ -534,14 +652,14 @@ $(document).ready(function () {
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> -10 </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
-                <div class="col-8">
-                    <input type="range" id="m${N}" min="-10" max="10" value="0"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice">
+                <div class="col-9">
+                    <input type="range" id="m${N}" min="-10" max="10" value="0" step="0.1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='m${N}';>
                 </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 10 </h6>
+                <div class="col-2">
+                    <h6 id="imgm${N}" class="text-white text-center mb-2"> 0 </h6>
                 </div>
             </div>
         </div>
@@ -551,48 +669,33 @@ $(document).ready(function () {
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 1 </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
-                <div class="col-8">
-                    <input type="number" id="n${N}" min="1" max="100" step="0.01" value="1"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 libre">
+                <div class="col-9">
+                    <input type="range" id="n${N}" min="0" max="10" value="0.01" step="0.01"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='n${N}';>
                 </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 100 </h6>
+                <div class="col-2">
+                    <h6 id="imgn${N}" class="text-white text-center mb-2"> 0 </h6>
                 </div>
             </div>
         </div>
 
-        <div class="container-fluid mt-5 mb-4 d-none" id="oo${N}">    
-            <h5 class="text-white text-center mt-2 mb-4">Reflexion
-            </h5>
-            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 1 </h6>
-                </div>
-                <div class="col-8">
-                    <input type="number" id="o${N}" min="1" max="10" step="1" value="1"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 libre">
-                </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 10 </h6>
-                </div>
-            </div>
-        </div>
+        
 
         <div class="container-fluid mt-5 mb-4 d-none" id="pp${N}">    
             <h5 class="text-white text-center mt-2 mb-4">Corrimiento en el tiempo
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 1 </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
-                <div class="col-8">
-                    <input type="number" id="p${N}" min="1" max="100" step="0.1" value="1"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 libre">
+                <div class="col-9">
+                    <input type="range" id="p${N}" min="-10" max="10" value="0" step="0.1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='p${N}';>
                 </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 100 </h6>
+                <div class="col-2">
+                    <h6 id="imgp${N}" class="text-white text-center mb-2"> 0 </h6>
                 </div>
             </div>
         </div>
@@ -602,14 +705,14 @@ $(document).ready(function () {
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 1% </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
-                <div class="col-8">
-                    <input type="number" id="di${N}" min="1" max="50" step="0.1" value="1"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 libre">
+                <div class="col-9">
+                    <input type="range" id="di${N}" min="-100" max="100" value="-100" step="0.5"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='di${N}';>
                 </div>
-                <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 50% </h6>
+                <div class="col-2">
+                    <h6 id="imgdi${N}" class="text-white text-center mb-2"> -100 </h6>
                 </div>
             </div>
         </div>
@@ -619,15 +722,60 @@ $(document).ready(function () {
             </h5>
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 51% </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
-                <div class="col-8">
-                    <input type="number" id="df${N}" min="51" max="100" step="0.1" value="100"
-                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 libre">
+                <div class="col-9">
+                    <input type="range" id="df${N}" min="-100" max="100" value="100" step="0.5"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='df${N}';>
                 </div>
+                <div class="col-2">
+                    <h6 id="imgdf${N}" class="text-white text-center mb-2"> 100 </h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="pp1${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Poder del filtro del 1
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
                 <div class="col-1">
-                    <h6 class="text-white text-center mb-2"> 100% </h6>
+                    <h6 class="text-white text-center mb-2">  </h6>
                 </div>
+                <div class="col-9">
+                    <input type="range" id="p1${N}" min="1" max="0.01" value="1" step="0.01"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='p1${N}';>
+                </div>
+                <div class="col-2">
+                    <h6 id="imgp1${N}" class="text-white text-center mb-2"> 1 </h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="tt${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="t${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza filtro1" data-id='${N}';>
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Filtro del 1
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="oo${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+               
+              <div class="col-10">corrimi
+                <button  id="0${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza reflexion" data-id='${N}';>
+                  <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Reflexion
+                  </h5></div>
+                </button>
+              </div>
             </div>
         </div>
 
@@ -673,19 +821,7 @@ $(document).ready(function () {
             </div>
         </div>
 
-        <div class="container-fluid mt-5 mb-4 d-none" id="tt${N}">    
-            
-            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
-                
-                <div class="col-10">
-                  <button  id="t${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza filtro1" data-id='${N}';>
-                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Filtro del 1
-                    </h5></div>
-                  </button>
-                </div>
-                
-            </div>
-        </div>
+        
 
         <div class="container-fluid mt-5 mb-4 d-none" id="uu${N}">    
             
@@ -832,7 +968,7 @@ $(document).ready(function () {
 
   function desactivarcambios() {
     var i = 2;
-    while (i < (conteo + 1)) {
+    while (i < conteo + 1) {
       const ids = ["delete", "update"];
       for (const idPrefix of ids) {
         const element = $("#" + idPrefix + i);
@@ -847,12 +983,11 @@ $(document).ready(function () {
     $("#modo2").addClass("d-none");
     $("#modo3").addClass("d-none");
     $("#extra").addClass("d-none");
-
   }
 
   function activarcambios() {
     var i = 2;
-    while (i < (conteo + 1)) {
+    while (i < conteo + 1) {
       const ids = ["delete", "update"];
       for (const idPrefix of ids) {
         const element = $("#" + idPrefix + i);
@@ -867,7 +1002,6 @@ $(document).ready(function () {
     $("#modo2").removeClass("d-none");
     $("#modo3").removeClass("d-none");
     $("#extra").removeClass("d-none");
-
   }
 
   function iniciarop(id, oper) {
@@ -879,44 +1013,49 @@ $(document).ready(function () {
     elegir(id);
     cambiarmodo(4);
     $("#ww" + id).addClass("d-none");
-    sliders(id, 14);
+    sliders(id, 22);
     op1 = id;
     opsign = oper;
     desactivarcambios();
-    var nuevoElemento = $(`<div id="avisomodo" class="alert alert-info ms-5 esperanza pulse fadein">
+    var nuevoElemento =
+      $(`<div id="avisomodo" class="alert alert-info ms-5 esperanza pulse fadein">
     <strong>${operaciones[opsign]}</strong> Elija la señal 2
   </div>`);
-    nuevoElemento.appendTo('#alertas');
+    nuevoElemento.appendTo("#alertas");
   }
 
   function terminarop(id) {
-    deselegir(id)
+    deselegir(id);
     cambiarmodo(3);
     activarcambios();
     $("#avisomodo").remove();
   }
 
   function operar() {
-
+    
     const operaciones = {
-      1: "Suma",
-      2: "Resta",
-      3: "Multiplicación",
+      1: "suma",
+      2: "resta",
+      3: "multiplicacion",
     };
+    datos1 = datificar(op1);
+    datos2 = datificar(op2);
+    conteo = conteo + 1;
 
     $.ajax({
       url: "/urias",
-      data: {
-        nombre: operaciones[opsign],
-        tipo: opsign,
-        id1: op1,
-        id2: op2,
-      },
+      contentType: 'application/json',
+      data: JSON.stringify({
+        datosA: datos1,
+        datosB: datos2,
+        tipo: operaciones[opsign],
+        idresultante: conteo,
+      }),
       type: "POST",
-      beforeSend: function() {
+      beforeSend: function () {
         Pace.restart();
       },
-      complete: function() {
+      complete: function () {
         Pace.stop();
       },
       success: function (response) {
@@ -929,6 +1068,16 @@ $(document).ready(function () {
           icon: "success",
           button: "Aceptar",
         });
+        agregarElemento(conteo, 100, (conteo + "- " + "Resultado"));
+        cambiarmodo(modo);
+        identificar(
+          "/static/data/" + conteo + ".csv",
+          colorog,
+          ("gra" + conteo),
+          "markers",
+          "scatter"
+        );
+
       },
       error: function (error) {
         Swal.fire({
@@ -942,15 +1091,42 @@ $(document).ready(function () {
         });
       },
     });
-
   }
 
   function cambiarmodo(modo) {
     var i = 2;
     var cam = 1;
 
-    while (i < (conteo + 1)) {
-      const ids = ["aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "ii", "jj", "kk", "mm", "nn", "oo", "pp", "qq", "rr", "ss", "tt", "uu", "vv", "ww", "xx", "dda", "ddi", "ddf"];
+    while (i < conteo + 1) {
+      const ids = [
+        "aa", //amplitud
+        "bb", //periodo
+        "cc", //muestration
+        "dd", // numero de periodos
+        "ee", // sigma
+        "ff", // omega
+        "gg", // frecuencia angular
+        "hh", // angulo de fase
+        "ii", // colorf
+        "jj", // paridad
+        "kk", // forma
+        "mm", // desplazamiento
+        "nn", // escalamiento
+        "oo", // reflexion
+        "pp", // corrimiento en el tiempo
+        "qq", // sumar
+        "rr", // restar
+        "ss", // multiplicar
+        "tt", // filtro del 1
+        "uu", // integrar
+        "vv", // diferenciar
+        "ww", // elegir
+        "xx", // cancelar
+        "dda", // amplitid buena
+        "ddi", // inicio
+        "ddf", // fin
+        "pp1", // Poder del filtro del 1
+      ];
       for (const idPrefix of ids) {
         const element = $("#" + idPrefix + i);
         if (!element.hasClass("d-none")) {
@@ -965,12 +1141,12 @@ $(document).ready(function () {
     let tipo;
 
     if (modo == 1) {
-      tipo = i => gettipo(i);
+      tipo = (i) => gettipo(i);
     } else {
       const camMapping = {
-        2: 11,
-        3: 12,
-        4: 13,
+        2: 19,
+        3: 20,
+        4: 21,
       };
 
       const cam = camMapping[modo];
@@ -982,39 +1158,46 @@ $(document).ready(function () {
       tipo = () => cam;
     }
 
-    while (i < (conteo + 1)) {
+    while (i < conteo + 1) {
       sliders(i, tipo(i));
       i++;
     }
-
-
   }
 
   function sliders(id, tipo) {
     const tipoToGraf = {
-      1: 1,
-      2: 1,
-      3: 1,
-      4: 2,
-      5: 2,
-      6: 3,
-      7: 8,
-      8: 8,
-      11: 4,
-      12: 5,
-      13: 6,
-      14: 7,
+      1: 2,
+      2: 2,
+      3: 2,
+      4: 3,
+      5: 3,
+      6: 4,
+      7: 18,
+      8: 1,
+      9: 1,
+      10: 1,
+      11: 1,
+      12: 1,
+      13: 2,
+      18: 18,
+      19: 14,
+      20: 15,
+      21: 16,
+      22: 17,
+      100: 100,
     };
 
     const grafToIds = {
-      1: ["dda", "bb", "cc", "dd", "mm", "ii", "jj", "kk"],
-      2: ["ee", "ff", "cc", "ii", "jj", "kk"],
-      3: ["aa", "gg", "hh", "cc", "ii", "jj", "kk"],
-      4: ["ddi", "ddf", "nn", "oo", "pp", "ii"],
-      5: ["dda", "qq", "rr", "ss", "tt", "uu", "vv", "ii"],
-      6: ["ww"],
-      7: ["xx"],
-      8: ["ddi", "ddf", "ii"]
+      1: ["aa", "bb", "cc", "mm", "ddi", "ddf", "ii", "jj", "kk"],
+      2: ["aa", "cc", "mm", "ddi", "ddf", "ii", "jj", "kk"],
+      3: ["cc", "ddi", "ddf", "ee", "ff", "ii", "jj", "kk"],
+      4: ["dda", "gg", "hh", "cc", "ddi", "ddf", "ii", "jj", "kk"],
+      14: ["nn", "oo", "pp", "ii"],
+      15: ["dda", "qq", "rr", "ss", "uu", "vv", "ii"],
+      16: ["ww"],
+      17: ["xx"],
+      18: ["ddi", "ddf", "ii"],
+      100: ["ii"],
     };
 
     const graf = tipoToGraf[tipo];
@@ -1026,17 +1209,17 @@ $(document).ready(function () {
     }
   }
 
-
-
-
-
   $(document).on("click", ".recolector", function () {
     var numero = $(this).attr("data-id");
-    actualizar(numero);
+    if (modo == 2){
+      actualizar2(numero);
+    } else {
+      actualizar(numero);
+    }
   });
 
   function getnombre(tipo) {
-    tipoe = ""
+    tipoe = "";
     switch (tipo) {
       case 1:
         tipoe = "Escalon Unitario";
@@ -1059,11 +1242,29 @@ $(document).ready(function () {
       case 7:
         tipoe = "Audio";
         break;
-      case 8:
+      case 18:
         tipoe = "Resultado";
         break;
+      case 8:
+        tipoe = "Cuadrada";
+        break;
+      case 9:
+        tipoe = "Tren de impulsos";
+        break;
+      case 10:
+        tipoe = "Dientes de sierra";
+        break;
+      case 11:
+        tipoe = "Triangular";
+        break;
+      case 12:
+        tipoe = "Botar pelota";
+        break;
+      case 13:
+        tipoe = "Impulso triangular";
+        break;
     }
-    return tipoe
+    return tipoe;
   }
 
   $(document).on("click", "#agregar", function () {
@@ -1080,8 +1281,9 @@ $(document).ready(function () {
       url: "/datos",
       data: {
         amplitud: 1,
+        amplitudreal: 1,
         frecuencia: 1,
-        muestration: 10,
+        muestration: 1000,
         periodo: 1,
         sigma: 0,
         omega: 0,
@@ -1095,14 +1297,14 @@ $(document).ready(function () {
         esc_tiempo: 0,
         reflexion: 0,
         corrimiento: 0,
-        inicio: 1,
+        inicio: -100,
         fin: 100,
       },
       type: "POST",
-      beforeSend: function() {
+      beforeSend: function () {
         Pace.restart();
       },
-      complete: function() {
+      complete: function () {
         Pace.stop();
       },
       success: function (response) {
@@ -1113,7 +1315,7 @@ $(document).ready(function () {
           "/static/data/" + conteo + ".csv",
           colorog,
           destino,
-          "lines",
+          "markers",
           "scatter"
         );
       },
@@ -1213,28 +1415,24 @@ $(document).ready(function () {
       color: "#ffffff",
       showDenyButton: true,
       showCancelButton: false,
-      confirmButtonText: 'Pausar',
-      denyButtonText: 'Cancelar',
+      confirmButtonText: "Pausar",
+      denyButtonText: "Cancelar",
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         stopAndPlayRecording();
         activaraudio();
         console.log(duracion);
-
-
       } else if (result.isDenied) {
-
       }
     });
-
   });
 
   $(document).on("click", "#modo1", function () {
     var nuevoElemento = $(`<div class="alert alert-info ms-3 esperanza popup">
     <strong>Modo 1</strong> Sliders generales
   </div>`);
-    nuevoElemento.appendTo('#alertas');
+    nuevoElemento.appendTo("#alertas");
     setTimeout(function () {
       nuevoElemento.remove();
     }, 3000);
@@ -1246,7 +1444,7 @@ $(document).ready(function () {
     var nuevoElemento = $(`<div class="alert alert-info ms-3 esperanza popup">
     <strong>Modo 2</strong> Variable dependiente
   </div>`);
-    nuevoElemento.appendTo('#alertas');
+    nuevoElemento.appendTo("#alertas");
     setTimeout(function () {
       nuevoElemento.remove();
     }, 3000);
@@ -1254,12 +1452,11 @@ $(document).ready(function () {
     modo = 2;
   });
 
-
   $(document).on("click", "#modo3", function () {
     var nuevoElemento = $(`<div class="alert alert-info ms-3 esperanza popup">
     <strong>Modo 3</strong> Variable independiente
   </div>`);
-    nuevoElemento.appendTo('#alertas');
+    nuevoElemento.appendTo("#alertas");
     setTimeout(function () {
       nuevoElemento.remove();
     }, 3000);
@@ -1269,10 +1466,10 @@ $(document).ready(function () {
 
   $(document).on("blur", ".libre", function () {
     var valor = parseFloat($(this).val());
-    if (isNaN(valor) || valor < $(this).attr('min')) {
-      $(this).val($(this).attr('min'));
-    } else if (valor > $(this).attr('max')) {
-      $(this).val($(this).attr('max'));
+    if (isNaN(valor) || valor < $(this).attr("min")) {
+      $(this).val($(this).attr("min"));
+    } else if (valor > $(this).attr("max")) {
+      $(this).val($(this).attr("max"));
     }
   });
 
@@ -1295,6 +1492,11 @@ $(document).ready(function () {
     filtrar(id, 2);
   });
 
+  $(document).on("click", ".reflexion", function () {
+    id = $(this).attr("data-id");
+    filtrar(id, 8);
+  });
+
   $(document).on("click", ".diferenciar", function () {
     id = $(this).attr("data-id");
     filtrar(id, 3);
@@ -1305,9 +1507,15 @@ $(document).ready(function () {
     filtrar(id, 1);
   });
 
+  $(document).on("input", ".gordo", function () {
+    id = $(this).attr("data-id");
+    $("#img" + id).text($(this).val());
+  });
+
+  
 
 
-  audio.addEventListener('loadedmetadata', function () {
+  audio.addEventListener("loadedmetadata", function () {
     let durationInSeconds = audio.duration;
     duracion = durationInSeconds * 1000;
     console.log(duracion);
@@ -1315,19 +1523,12 @@ $(document).ready(function () {
       title: "Reproduciendo...",
       timer: duracion,
       timerProgressBar: true,
-      showConfirmButton: false, // Oculta el botón de confirmación
-      showCancelButton: false,  // Oculta el botón de cancelación
-      allowOutsideClick: false, // No permite cerrar la alerta haciendo clic fuera de ella
+      showConfirmButton: false, 
+      showCancelButton: false, 
+      allowOutsideClick: false, 
       allowEscapeKey: false,
       background: "#212529",
       color: colorpr,
-
     });
   });
-
-
-
-
-
-
 });

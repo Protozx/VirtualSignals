@@ -3,6 +3,7 @@ from flask import request
 from proy import * 
 from elemental2 import *
 from flask import jsonify
+import json
 #import time
 
 
@@ -26,6 +27,10 @@ def esperanza():
 def datos():
     global v
     amplitud = request.form.get('amplitud')
+    amplitudreal = request.form.get('amplitudreal')
+
+    amplitud = int(amplitud) * int(amplitudreal)
+
     frecuencia = request.form.get('frecuencia')
     muestration = request.form.get('muestration')
     desplazamiento = request.form.get('desplazamiento')
@@ -38,15 +43,72 @@ def datos():
     continuidad = request.form.get('continuidad')
     tipo = request.form.get('tipo')
     id = request.form.get('id')
+    inicio = request.form.get('inicio')
+    fin = request.form.get('fin')
+
+    print(id)
     #time.sleep(10)
-    generar_grafica(int(amplitud),int(frecuencia),int(muestration),int(desplazamiento),int(periodo),(float(sigma)/100),(float(omega)/100),float(frec_ang),float(angulo_fase),par,continuidad,tipo,id)
-    print((int(amplitud),int(frecuencia),int(muestration),int(desplazamiento),int(periodo),(float(sigma)/100),(float(omega)/100),float(frec_ang),float(angulo_fase),par,continuidad,tipo,id))    
+    generar_grafica(id, str(tipo), float(amplitud),float(periodo),int(muestration),float(desplazamiento),float(inicio), float(fin), (float(sigma)),(float(omega)),float(frec_ang),float(angulo_fase),str(par),int(continuidad))
+        
     return "no"
 
 @app.route('/urias', methods=['POST'])
 def urias():
     global v
+    json_data = request.get_json()
+
+        # Accede al valor de "c" en el JSON
+    datosA = json_data['datosA']
+    datosB = json_data['datosB']
+    operacion = json_data['tipo']
+    puerko = json_data['idresultante']
+    #print(f"{datosA}, {type(datosA)}")
+    """PaqueteA = json.loads(datosA)
+    PaqueteB = json.loads(datosB)"""
+    PaqueteA = datosA
+    PaqueteB = datosB
+
+    id_A = PaqueteA["id"]
+    tipo_A = PaqueteA["tipo"]
+    amplitud_A = PaqueteA["amplitud"]
+    periodo_A = PaqueteA["periodo"]
+    muestration_A = PaqueteA["muestration"]
+    desplazamiento_A = PaqueteA["desplazamiento"]
+    inicio_A = PaqueteA["inicio"]
+    fin_A = PaqueteA["fin"]
+    sigma_A = PaqueteA["sigma"]
+    omega_A = PaqueteA["omega"]
+    frec_angular_A = PaqueteA["frecuencia_angular"]
+    angulo_fase_A = PaqueteA["angulo_fase"]
+    par_A = PaqueteA["par"]
+    continuidad_A = PaqueteA["continuidad"]
+
+    id_B = PaqueteB["id"]
+    tipo_B = PaqueteB["tipo"]
+    amplitud_B = PaqueteB["amplitud"]
+    periodo_B = PaqueteB["periodo"]
+    muestration_B = PaqueteB["muestration"]
+    desplazamiento_B = PaqueteB["desplazamiento"]
+    inicio_B = PaqueteB["inicio"]
+    fin_B = PaqueteB["fin"]
+    sigma_B = PaqueteB["sigma"]
+    omega_B = PaqueteB["omega"]
+    frec_angular_B = PaqueteB["frecuencia_angular"]
+    angulo_fase_B = PaqueteB["angulo_fase"]
+    par_B = PaqueteB["par"]
+    continuidad_B = PaqueteB["continuidad"]
+    tupla_A = id_A, str(tipo_A), float(amplitud_A),float(periodo_A),int(muestration_A),float(desplazamiento_A),float(inicio_A), float(fin_A), (float(sigma_A)),(float(omega_A)),float(frec_angular_A),float(angulo_fase_A),str(par_A),int(continuidad_A)
+    tupla_B = id_B, str(tipo_B), float(amplitud_B),float(periodo_B),int(muestration_B),float(desplazamiento_B),float(inicio_B), float(fin_B), (float(sigma_B)),(float(omega_B)),float(frec_angular_B),float(angulo_fase_B),str(par_B),int(continuidad_B)
+    operar_senales(tupla_A, tupla_B, operacion, puerko)
+    #datosA = request.form.get('datosA')
+    #datosB = request.form.get('datosB')
+    #operacion = request.form.get('tipo')
+    #data1_dict = json.loads(datosA)
+    #print(data1_dict)
+    # Obtener el valor de 'a'
+    # a_value = data1_dict.get('a')
     
+    #operar_senales(datosA, datosB, operacion)
     return v
 
 @app.route('/filtrodel1', methods=['POST'])
@@ -57,15 +119,57 @@ def filtrodel1():
 
 @app.route('/integrar', methods=['POST'])
 def integrar():
-    global v
+    id_señal = request.form.get('id')
+    id_integral = request.form.get('idintegral')
+    filtro = request.form.get('filtro')
+    x,y = leer_csv(f"static/data/{id_señal}.csv", "x", "y")
+    x,y = integrar_fx(x, y)
+    escrbir_csv(f"{id_integral}.csv", "x", "y", x, y)
+
+ 
+    
+    return v
+
+@app.route('/reflexion', methods=['POST'])
+def reflexion():
+    id_señal = request.form.get('id')
+    x,y = leer_csv(f"static/data/{id_señal}.csv", "x", "y")
+    x,y = reflejar(x, y)
+    escrbir_csv(f"{id_señal}.csv", "x", "y", x, y)
+
+ 
     
     return v
 
 @app.route('/diferenciar', methods=['POST'])
 def diferenciar():
-    global v
+    id_señal = request.form.get('id')
+    id_integral = request.form.get('idintegral')
+    filtro = request.form.get('filtro')
+    x,y = leer_csv(f"static/data/{id_señal}.csv", "x", "y")
+    x,y = derivar_fx(x, y)
+    escrbir_csv(f"{id_integral}.csv", "x", "y", x, y)
     
     return v
+
+@app.route('/cortito', methods=['POST'])
+def cortito():
+    tipo = request.form.get('tipo')
+    id = request.form.get('id')
+    esc_tiempo = request.form.get('esc_tiempo')
+    corrimiento = request.form.get('corrimiento')
+    print(esc_tiempo)
+    print(corrimiento)
+    x,y = leer_csv(f"static/data/{id}.csv", "x", "y")
+    x,y = desplazamiento(x, y, float(corrimiento))
+    x, y = escalamiento_tiempo(x, y, float(esc_tiempo), False)
+    escrbir_csv(f"{id}.csv", "x", "y", x, y)
+
+    
+
+    return v
+
+
 
 @app.route('/audio', methods=['POST'])
 def audio():

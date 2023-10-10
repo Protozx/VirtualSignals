@@ -30,54 +30,27 @@ def filtrar_mayores_fin(df, fin):
 
 
 def normalizar_datos(paquete_A, paquete_B):
-    id_senalA, tipoA, amplitudA, periodoA, muestrationA, desplazamientoA, inicioA, finA, sigmaA, omegaA, frec_angularA, angulo_faseA, es_discretaA, paridadA = paquete_A
-    id_senalB, tipoB,  amplitudB, periodoB, muestrationB, desplazamientoB, inicioB, finB, sigmaB, omegaB, frec_angularB, angulo_faseB, es_discretaB, paridadB = paquete_B
-
-    print(f"tipos normA = {tipoA}")
-    print(f"tipos normB = {tipoB}")
+    id_senalA, amplitudA, periodoA, muestrationA, desplazamientoA, inicioA, finA, sigmaA, omegaA, frec_angularA, angulo_faseA, es_discretaA, paridadA = paquete_A
+    id_senalB, amplitudB, periodoB, muestrationB, desplazamientoB, inicioB, finB, sigmaB, omegaB, frec_angularB, angulo_faseB, es_discretaB, paridadB = paquete_B
 
     inicio, fin = hallar_intervalos(inicioA, inicioB, finA, finB)
 
+    x_A, y_A = generar_señal(id_senalA, amplitudA, periodoA, muestrationA, desplazamientoA, inicio, fin, sigmaA, omegaA, frec_angularA, angulo_faseA, es_discretaA, paridadA)
+    x_B, y_B = generar_señal(id_senalB, amplitudB, periodoB, muestrationB, desplazamientoB, inicio, fin, sigmaB, omegaB, frec_angularB, angulo_faseB, es_discretaB, paridadB)
 
-
-    x_A, y_A = generar_grafica(id_senalA, tipoA, amplitudA, periodoA, muestrationA, desplazamientoA, inicio, fin, sigmaA, omegaA, frec_angularA, angulo_faseA, es_discretaA, paridadA)
-    x_B, y_B = generar_grafica(id_senalB, tipoB, amplitudB, periodoB, muestrationA, desplazamientoB, inicio, fin, sigmaB, omegaB, frec_angularB, angulo_faseB, es_discretaB, paridadB)
-
-    df_A = pd.DataFrame({'x': x_A, 'y': y_A})
-    df_B = pd.DataFrame({'x': x_B, 'y': y_B})
-
-    print("-----------------")
-    print("Data A")
-    print(df_A)
-    print("-----------------")
-    print("Data B")
-    print(df_B)
-
+    df_A = pd.DataFrame({'XA': x_A, 'YA': y_A})
+    df_B = pd.DataFrame({'XB': x_B, 'YB': y_B})
     df_A = filtrar_mayores_fin(df_A, finA)
     df_B = filtrar_mayores_fin(df_B, finB)
-    df_A = filtrar_menores_inicio(df_A, inicioA)
-    df_B = filtrar_menores_inicio(df_B, inicioB)
+    df_A = filtrar_menores_inicio(df_A, finA)
+    df_B = filtrar_menores_inicio(df_B, finB)
     return df_A, df_B
-
-def operar_senales(paquete_A, paquete_B, operacion, id_operacion):
-    if operacion == "suma":
-        x,y= sumar_senales(paquete_A, paquete_B)
-    elif operacion == "resta":
-        x,y= restar_senales(paquete_A, paquete_B)
-    elif operacion == "multiplicacion":
-        x,y= multiplicar_senales(paquete_A, paquete_B)
-    escrbir_csv(str(id_operacion) +".csv", "x", "y", x, y)
 
 
 def sumar_senales(paquete_sumandoA, paquete_sumandoB):
     df_sA, df_sB = normalizar_datos(paquete_sumandoA, paquete_sumandoB)
     df_suma = df_sA[['x']].copy()
     df_suma['y'] = df_sA['y'] + df_sB['y']
-    print(df_sA)
-    print("-----------------------")
-    print("Sumando")
-    print(df_sB)
-    #print(df_suma)
 
     return df_suma["x"].values, df_suma["y"].values
 
@@ -86,9 +59,6 @@ def restar_senales(paquete_minuendo, paquete_sustraendo):
     df_minuendo, df_sustraendo = normalizar_datos(paquete_minuendo, paquete_sustraendo)
     df_resta = df_minuendo[['x']].copy()
     df_resta['y'] = df_minuendo['y'] - df_sustraendo['y']
-    print("-----------------------")
-    print("Resta")
-    print(df_resta)
     return df_resta["x"].values, df_resta["y"].values
 
 
@@ -99,7 +69,7 @@ def multiplicar_senales(paquete_factA, paquete_factB):
     return df_producto["x"].values, df_producto["y"].values
 
 
-def derivar_fx(x, y):
+def derivar(x, y):
     dx = np.diff(x)
     dy = np.diff(y)
 
@@ -109,7 +79,7 @@ def derivar_fx(x, y):
     return x_derivada, derivada
 
 
-def integrar_fx(x, y):
+def integrar(x, y):
     integral = cumtrapz(y, x, initial=0)
     return x, integral
 
@@ -128,7 +98,6 @@ def escalamiento_tiempo(x, y, cte, es_discreto):
         df = df[df['x'] % 1 == 0]
         x = df["x"].values
         y = df["y"].values
-
     return x, y
 
 
@@ -156,7 +125,9 @@ def escrbir_csv(nombre_archivo, encabezado_x, encabezado_y, eje_x, eje_y):
     ruta_completa = os.path.join("static/data/", nombre_archivo)
     with open(ruta_completa, mode='w', newline='') as archivo_csv:
         escritor_csv = csv.writer(archivo_csv)
+
         escritor_csv.writerow([encabezado_x, encabezado_y])
+
         for x, y in zip(eje_x, eje_y):
             escritor_csv.writerow([x, y])
 
@@ -167,7 +138,6 @@ def leer_csv(nombre_archivo, encabezado_x, encabezado_y):
 
 
 def escribir_par(x, y, nombre_arc, encabezado_x,encabezado_y, ):
-    print(y)
     par = 0.5 * (y + np.flip(y))
     escrbir_csv(f"{nombre_arc}", encabezado_x, encabezado_y, x,par)
 
@@ -179,11 +149,11 @@ def escribir_impar(y, nombre_arc, encabezado_x,encabezado_y, x):
 
 def escribir_señal(id, paridad, x, y):
     if paridad == "0":
-        escrbir_csv(str(id) +".csv", "x", "y", x, y)
+        escrbir_csv(id +".csv", "x", "y", x, y)
     elif paridad == "1":
-        escribir_par(x, y, str(id) +".csv", "x", "y")
+        escribir_par(y, id +".csv", "x", "y", x)
     elif paridad == "2":
-        escribir_impar(y, str(id) +".csv", "x", "y", x)
+        escribir_impar(y, id +".csv", "x", "y", x)
 
 
 def generar_cuadrada(amplitud, periodo, muestration, desplazamiento, inicio, fin, es_discreta):
@@ -193,7 +163,7 @@ def generar_cuadrada(amplitud, periodo, muestration, desplazamiento, inicio, fin
     if es_discreta:
         t = t.astype(int)
         t = np.unique(t)
-        muestration = int(fin) - int(inicio)
+        muestration = fin - inicio
 
     cuadrada = np.zeros(muestration)
 
@@ -212,9 +182,9 @@ def generar_tren_impulsos(amplitud, periodo, muestration, desplazamiento, inicio
     tiempo = np.linspace(inicio, fin, muestration)
 
     if es_discreta:
-        t = t.astype(int)
-        t = np.unique(t)
-        muestration = int(fin) - int(inicio)
+        tiempo = tiempo.astype(int)
+        tiempo = np.unique(tiempo)
+        muestration = fin - inicio
 
     señal = np.zeros_like(tiempo)
 
@@ -238,7 +208,7 @@ def generar_dientes_sierra(amplitud, periodo, muestration, desplazamiento, inici
     if es_discreta:
         t = t.astype(int)
         t = np.unique(t)
-        muestration = int(fin) - int(inicio)
+        muestration = fin - inicio
 
     dientes_sierra = np.zeros(muestration)
 
@@ -258,7 +228,7 @@ def generar_triangular(amplitud, periodo, muestration, desplazamiento, inicio, f
     if es_discreta:
         t = t.astype(int)
         t = np.unique(t)
-        muestration = int(fin) - int(inicio)
+        muestration = fin - inicio
 
     triangular = np.zeros(muestration)
 
@@ -281,7 +251,7 @@ def generar_botar_pelota(amplitud, periodo, muestration, desplazamiento, inicio,
     if es_discreta:
         t = t.astype(int)
         t = np.unique(t)
-        muestration = int(fin) - int(inicio)
+        muestration = fin - inicio
 
     pelota = np.zeros(muestration)
 
@@ -300,7 +270,6 @@ def generar_escalon_unitario(amplitud, muestration, desplazamiento, inicio, fin,
     if es_discreta:
         t = t.astype(int)
         t = np.unique(t)
-        muestration = int(fin) - int(inicio)
 
     escalon = np.zeros(len(t))
 
@@ -320,7 +289,7 @@ def generar_impulso_unitario(amplitud, muestration, desplazamiento, inicio, fin,
     if es_discreta:
         t = t.astype(int)
         t = np.unique(t)
-        muestration = int(fin) - int(inicio)
+        muestration = fin - inicio
 
 
     impulso = np.zeros(len(t))
@@ -337,7 +306,6 @@ def generar_impulso_triangular(amplitud, muestration, desplazamiento, inicio, fi
     if es_discreta:
         t = t.astype(int)
         t = np.unique(t)
-        muestration = int(fin) - int(inicio)
 
     impulso_triang = np.zeros(len(t))
 
@@ -360,7 +328,6 @@ def generar_rampa(amplitud, muestration, desplazamiento, inicio, fin, es_discret
     if es_discreta:
         t = t.astype(int)
         t = np.unique(t)
-        muestration = int(fin) - int(inicio)
     
     signal = np.zeros(len(t))
     
@@ -376,6 +343,8 @@ def generar_rampa(amplitud, muestration, desplazamiento, inicio, fin, es_discret
 def generar_exponencial(muestration, inicio, fin, sigma, omega, es_discreta, id_senal):
 
     senal = lambda s,t: np.exp(s*t)
+    inicio  = -20 
+    fin  = 20
 
     # PROCEDIMIENTO
     ti = np.linspace(inicio, fin, muestration)
@@ -383,12 +352,11 @@ def generar_exponencial(muestration, inicio, fin, sigma, omega, es_discreta, id_
     if es_discreta:
         ti = ti.astype(int)
         ti = np.unique(ti)
-        muestration = int(fin) - int(inicio)
 
     s_i = complex(sigma,omega)
     senal_i = senal(s_i,ti)
 
-    if id_senal == "4":
+    if id_senal == "10":
         return ti, np.real(senal_i)
     else:
         return ti, np.imag(senal_i)
@@ -400,73 +368,54 @@ def generar_senoidal(amplitud, frec_angular, angulo_fase, muestration, inicio, f
     if es_discreta:
         t = t.astype(int)
         t = np.unique(t)
-        muestration = int(fin) - int(inicio)
     seno = amplitud * np.cos(frec_angular * t + angulo_fase)
 
     return t, seno
 
 
-def generar_grafica(id,tipo, amplitud, periodo, muestration, desplazamiento, inicio, fin, sigma, omega, frec_angular, angulo_fase, paridad, es_discreta):
-    print("--------------------------")
-    print(f"tipo={tipo}, type(tipo)={type(tipo)}")
-    if tipo == "8":
-        print("8")
-        x, y = generar_cuadrada(amplitud, periodo, muestration, desplazamiento, inicio, fin, int(es_discreta))
-        escribir_señal(id, paridad, x, y)
+def generar_señal(id_señal, tipo, amplitud, periodo, muestration, desplazamiento, inicio, fin, sigma, omega, frec_angular, angulo_fase, es_discreta, paridad):
 
-    elif tipo == "9":
-        print("9")
-        x,y = generar_tren_impulsos(amplitud, periodo, muestration, desplazamiento, inicio, fin, es_discreta)
-        escribir_señal(id, paridad, x, y)
-
-    elif tipo == "10":
-        print("10")
-        x,y = generar_dientes_sierra(amplitud, periodo, muestration, desplazamiento, inicio, fin, es_discreta)
-        escribir_señal(id, paridad, x, y)
-
-    elif tipo == "11":
-        print("11")
-        x,y = generar_triangular(amplitud, periodo, muestration, desplazamiento, inicio, fin, es_discreta)
-        escribir_señal(id, paridad, x, y)
-
-    elif tipo == "12":
-        print("12")
-        x,y = generar_botar_pelota(amplitud, periodo, muestration, desplazamiento, inicio, fin, es_discreta)
-        escribir_señal(id, paridad, x, y)
-
-    elif tipo == "1":
-        print("1")
-        print("Cayó escalón")
-        x, y = generar_escalon_unitario(amplitud, muestration, desplazamiento, inicio, fin, es_discreta)
-        escribir_señal(id, paridad, x, y)
+    if tipo == "1":
+        x, y = generar_cuadrada(amplitud, periodo, muestration, desplazamiento, inicio, fin, es_discreta)
+        escribir_señal(id_señal, paridad, x, y)
 
     elif tipo == "2":
-        print("2")
-        x, y = generar_impulso_unitario(amplitud, muestration, desplazamiento, inicio, fin, es_discreta)
-        escribir_señal(id, paridad, x, y)
-
-    elif tipo == "13":
-        print("13")
-        x, y = generar_impulso_triangular(amplitud, muestration, desplazamiento, inicio, fin, es_discreta)
-        escribir_señal(id, paridad, x, y)
+        x,y = generar_tren_impulsos(amplitud, periodo, muestration, desplazamiento, inicio, fin, es_discreta)
+        escribir_señal(tipo, paridad, x, y)
 
     elif tipo == "3":
-        print("3")
-        x, y = generar_rampa(amplitud, muestration, desplazamiento, inicio, fin, es_discreta)
-        escribir_señal(id, paridad, x, y)
+        x,y = generar_dientes_sierra(amplitud, periodo, muestration, desplazamiento, inicio, fin, es_discreta)
+        escribir_señal(tipo, paridad, x, y)
 
-    elif tipo == "4" or tipo ==  "5":
-        print("4o5")
-        x, y = generar_exponencial(muestration, inicio, fin, sigma, omega, es_discreta, tipo)
-        escribir_señal(id, paridad, x, y)
-    
+    elif tipo == "4":
+        x,y = generar_triangular(amplitud, periodo, muestration, desplazamiento, inicio, fin, es_discreta)
+        escribir_señal(tipo, paridad, x, y)
+
+    elif tipo == "5":
+        x,y = generar_botar_pelota(amplitud, periodo, muestration, desplazamiento, inicio, fin, es_discreta)
+        escribir_señal(tipo, paridad, x, y)
+
     elif tipo == "6":
-        print("6")
-        x, y = generar_senoidal(amplitud, frec_angular, angulo_fase, muestration, inicio, fin, es_discreta)
-        escribir_señal(id, paridad, x, y)
-    
-    else:
-        print("Cayo caso 1000")
-        x, y = leer_csv(f"static/data/{id}.csv", "x", "y")
+        x, y = generar_escalon_unitario(amplitud, muestration, desplazamiento, inicio, fin, es_discreta)
+        escribir_señal(tipo, paridad, x, y)
 
+    elif tipo == "7":
+        x, y = generar_impulso_unitario(amplitud, muestration, desplazamiento, inicio, fin, es_discreta)
+        escribir_señal(tipo, paridad, x, y)
+
+    elif tipo == "8":
+        x, y = generar_impulso_triangular(amplitud, muestration, desplazamiento, inicio, fin, es_discreta)
+        escribir_señal(tipo, paridad, x, y)
+
+    elif tipo == "9":
+        x, y = generar_rampa(amplitud, muestration, desplazamiento, inicio, fin, es_discreta)
+        escribir_señal(tipo, paridad, x, y)
+
+    elif tipo == "10" or "11":
+        x, y = generar_exponencial(muestration, inicio, fin, sigma, omega, es_discreta, tipo)
+        escribir_señal(tipo, paridad, x, y)
+    
+    elif tipo == "12":
+        x, y = generar_senoidal(amplitud, frec_angular, angulo_fase, muestration, inicio, fin, es_discreta)
+        escribir_señal(tipo, paridad, x, y)
     return x, y
