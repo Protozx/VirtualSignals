@@ -1,22 +1,16 @@
 import csv
 
-def divide_palabras(palabras):
-    segmentos = {}
-    for palabra1 in palabras:
-        for palabra2 in palabras:
-            if palabra1 != palabra2:
-                i = 0
-                while i < len(palabra1):
-                    seg = palabra1[i:]
-                    if palabra2.startswith(seg):
-                        if seg not in segmentos:
-                            segmentos[seg] = []
-                        segmentos[seg].append(palabra2)
-                    i += 1
+def divide_palabras(palabra1, palabra2):
+    segmentos = []
+    i = 0
+    while i < len(palabra1):
+        seg = palabra1[i:]
+        if palabra2.startswith(seg):
+            segmentos.append(seg)
+        i += 1
     return segmentos
 
 def generar_automata(palabras):
-    segmentos = divide_palabras(palabras)
     automata = {}
     estado_inicial = 'q0'
     automata[estado_inicial] = {}
@@ -24,7 +18,9 @@ def generar_automata(palabras):
 
     for palabra in palabras:
         estado_actual = estado_inicial
-        for i, simbolo in enumerate(palabra):
+        i = 0
+        while i < len(palabra):
+            simbolo = palabra[i]
             if simbolo not in automata[estado_actual]:
                 nuevo_estado = 'q' + str(estado_contador)
                 automata[estado_actual][simbolo] = nuevo_estado
@@ -32,25 +28,39 @@ def generar_automata(palabras):
                     automata[nuevo_estado] = {}
                 estado_actual = nuevo_estado
                 estado_contador += 1
+                i += 1
             else:
                 estado_actual = automata[estado_actual][simbolo]
-            # Verificar si hay palabras que comienzan con los caracteres restantes
-            restante = palabra[i+1:]
-            for seg, p_list in segmentos.items():
-                if restante.startswith(seg):
-                    for p in p_list:
-                        if p[0] not in automata[estado_actual]:
-                            automata[estado_actual][p[0]] = automata[estado_inicial][p[0]]
+                i += 1
 
-        automata[estado_actual]['final'] = True
+        if 'final' not in automata[estado_actual]:
+            automata[estado_actual]['final'] = True
+
+    # Añadiendo las transiciones para detectar inicios repentinos de otras palabras
+    for estado in automata:
+        for simbolo in set(''.join(palabras)):
+            if simbolo not in automata[estado]:
+                # ¿Es el símbolo el inicio de alguna palabra?
+                for palabra in palabras:
+                    if palabra.startswith(simbolo):
+                        automata[estado][simbolo] = automata[estado_inicial][simbolo]
+                        break
+                else:
+                    automata[estado][simbolo] = estado_inicial
 
     simbolos = set(''.join(palabras))
     return automata, simbolos
 
+
+
 def generar_csv(automata, simbolos):
-    with open('vamal.csv', 'w', newline='') as csvfile:
+    with open('vaBien.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
+
+        # Escribir la fila de los símbolos de entrada
         writer.writerow([''] + list(simbolos) + ['final'])
+
+        # Escribir las filas de estados y transiciones
         for estado, transiciones in automata.items():
             row = [estado]
             for simbolo in simbolos:
@@ -62,7 +72,9 @@ def generar_csv(automata, simbolos):
             writer.writerow(row)
 
 if __name__ == "__main__":
-    palabras = ["break", "else"]
+    palabras = ["auto","break","case","char","const","continue","default","do","double","else","enum","extern","float","for","goto","if","int","long","register","return","short","signed","sizeof","static","struct","switch","typedef","union","unsigned","void","volatile","while"]
+
     automata, simbolos = generar_automata(palabras)
     generar_csv(automata, simbolos)
+
     print("Tabla de estados y transiciones generada en 'automata.csv'")

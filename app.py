@@ -105,6 +105,7 @@ def urias():
     #operacion = request.form.get('tipo')
     #data1_dict = json.loads(datosA)
     #print(data1_dict)
+
     # Obtener el valor de 'a'
     # a_value = data1_dict.get('a')
     
