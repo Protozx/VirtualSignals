@@ -114,6 +114,12 @@ def urias():
 @app.route('/filtrodel1', methods=['POST'])
 def filtrodel1():
     global v
+    poder = request.form.get('poder')
+    id_señal = request.form.get('id')
+    id_filtro1 = request.form.get('idintegral')
+    x,y = leer_csv(f"static/data/{id_señal}.csv", "x", "y")
+    x,y = filtro_del_1(x, y, float(poder))
+    escrbir_csv(f"{id_filtro1}.csv", "x", "y", x, y)
     
     return v
 
@@ -121,7 +127,6 @@ def filtrodel1():
 def integrar():
     id_señal = request.form.get('id')
     id_integral = request.form.get('idintegral')
-    filtro = request.form.get('filtro')
     x,y = leer_csv(f"static/data/{id_señal}.csv", "x", "y")
     x,y = integrar_fx(x, y)
     escrbir_csv(f"{id_integral}.csv", "x", "y", x, y)
@@ -151,6 +156,8 @@ def diferenciar():
     escrbir_csv(f"{id_integral}.csv", "x", "y", x, y)
     
     return v
+
+
 
 @app.route('/cortito', methods=['POST'])
 def cortito():

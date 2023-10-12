@@ -141,14 +141,15 @@ def desplazamiento(x, y, cte):
     x = x - cte
     return x, y
 
-def suavizar_señal_con_filtro_del_1(x, y, alfa):
+def filtro_del_1(x, y, alfa):
+    print(alfa)
     señal_suavizada = np.zeros_like(y)
-    señal_suavizada[0] = y[0]
+    señal_suavizada[0] = float(y[0])
 
     for i in range(1, len(y)):
-        señal_suavizada[i] = alfa * y[i] + (1 - alfa) * señal_suavizada[i - 1]
+        señal_suavizada[i] = alfa * float(y[i]) + (1 - alfa) * float(señal_suavizada[i - 1])
 
-    return x, y, señal_suavizada
+    return x, señal_suavizada
 
 
 def escrbir_csv(nombre_archivo, encabezado_x, encabezado_y, eje_x, eje_y):

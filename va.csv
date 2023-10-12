@@ -1,0 +1,5 @@
+	a	b	e	k	l	r	s	final
+q0	0	q1	q3	0	0	0	0	0
+q1	0	0	q1,q2	0	0	q1	0	0
+q2	q2	0	0	q2	0	0	0	0
+q3	0	0	q3	0	q3	0	q3	0

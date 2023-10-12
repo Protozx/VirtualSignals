@@ -1,0 +1,18 @@
+Estado actual,Letra,Estado siguiente
+0,h,1
+0,h,2
+2,o,2
+2,o,3
+3,l,3
+3,l,4
+4,a,4
+0,o,5
+5,l,5
+5,l,6
+6,a,6
+0,l,7
+7,a,7
+0,h,8
+0,h,9
+9,o,9
+9,o,10

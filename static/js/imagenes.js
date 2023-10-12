@@ -172,8 +172,10 @@ $(document).ready(function () {
   }
 
   function filtrar(id, filtro) {
+    poder1 = $("#p1"+id).val();
     conteo = conteo + 1;
     datos = datificar(id);
+    //alert(poder1);
     const filtros = {
       1: "/filtrodel1",
       2: "/integrar",
@@ -192,7 +194,7 @@ $(document).ready(function () {
     if(filtro == 8){
       $.ajax({
         url: filtros[filtro],
-        data: { id: id, filtro: nombres[filtro], idintegral: (conteo)},
+        data: { id: id, filtro: nombres[filtro],poder: poder1, idintegral: (conteo),},
         type: "POST",
         beforeSend: function () {
           Pace.restart();
@@ -214,7 +216,7 @@ $(document).ready(function () {
             "/static/data/" + id + ".csv",
             colorog,
             ("gra" + id),
-            "markers",
+            "lines",
             "scatter"
           );
         },
@@ -233,7 +235,7 @@ $(document).ready(function () {
     } else {
       $.ajax({
         url: filtros[filtro],
-        data: { id: id, filtro: nombres[filtro], idintegral: (conteo)},
+        data: { id: id, filtro: nombres[filtro],poder: poder1, idintegral: (conteo)},
         type: "POST",
         beforeSend: function () {
           Pace.restart();
@@ -258,7 +260,7 @@ $(document).ready(function () {
             "/static/data/" + conteo + ".csv",
             colorog,
             ("gra" + conteo),
-            "markers",
+            "lines",
             "scatter"
           );
         },
@@ -297,7 +299,7 @@ $(document).ready(function () {
             "/static/data/" + numero + ".csv",
             datos.color,
             datos.destino,
-            "markers",
+            "lines",
             "scatter"
           );
         } else {
@@ -343,7 +345,7 @@ $(document).ready(function () {
             "/static/data/" + numero + ".csv",
             datos.color,
             datos.destino,
-            "markers",
+            "lines",
             "scatter"
           );
         } else {
@@ -742,11 +744,11 @@ $(document).ready(function () {
                     <h6 class="text-white text-center mb-2">  </h6>
                 </div>
                 <div class="col-9">
-                    <input type="range" id="p1${N}" min="1" max="0.01" value="1" step="0.01"
+                    <input type="range" id="p1${N}" min="0.01" max="1" value="0.01" step="0.01"
                         class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='p1${N}';>
                 </div>
                 <div class="col-2">
-                    <h6 id="imgp1${N}" class="text-white text-center mb-2"> 1 </h6>
+                    <h6 id="imgp1${N}" class="text-white text-center mb-2"> 0.01 </h6>
                 </div>
             </div>
         </div>
@@ -1074,7 +1076,7 @@ $(document).ready(function () {
           "/static/data/" + conteo + ".csv",
           colorog,
           ("gra" + conteo),
-          "markers",
+          "lines",
           "scatter"
         );
 
@@ -1193,7 +1195,7 @@ $(document).ready(function () {
       3: ["cc", "ddi", "ddf", "ee", "ff", "ii", "jj", "kk"],
       4: ["dda", "gg", "hh", "cc", "ddi", "ddf", "ii", "jj", "kk"],
       14: ["nn", "oo", "pp", "ii"],
-      15: ["dda", "qq", "rr", "ss", "uu", "vv", "ii"],
+      15: ["dda", "qq", "rr", "ss", "uu","pp1","tt", "vv", "ii"],
       16: ["ww"],
       17: ["xx"],
       18: ["ddi", "ddf", "ii"],
@@ -1315,7 +1317,7 @@ $(document).ready(function () {
           "/static/data/" + conteo + ".csv",
           colorog,
           destino,
-          "markers",
+          "lines",
           "scatter"
         );
       },
