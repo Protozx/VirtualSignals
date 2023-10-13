@@ -15,6 +15,6 @@ def leer_transiciones(archivo_csv):
 
     return transiciones
 
-archivo_csv = "vaBien.csv"  # Reemplaza "tu_archivo.csv" por el nombre/path de tu archivo
+archivo_csv = "celula.csv"  # Reemplaza "tu_archivo.csv" por el nombre/path de tu archivo
 transiciones = leer_transiciones(archivo_csv)
 print(transiciones)
