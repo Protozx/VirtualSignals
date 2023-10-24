@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask import request
 from proy import * 
 from elemental2 import *
+from basu import *
 from flask import jsonify
 import json
 #import time
@@ -159,6 +160,21 @@ def diferenciar():
 
 
 
+@app.route('/practica5', methods=['POST'])
+def practica5():
+    tipo = request.form.get('tipo')
+    id = request.form.get('id')
+    mue_mz = request.form.get('mue_mz')
+    og_mz = request.form.get('og_mz')
+    segundos = request.form.get('segundos')
+    if tipo == '14':
+        paso1(float(segundos),float(mue_mz),id)
+    else:
+        paso2(float(segundos),float(og_mz),float(mue_mz),id)
+    
+
+    return v
+
 @app.route('/cortito', methods=['POST'])
 def cortito():
     tipo = request.form.get('tipo')
@@ -193,6 +209,10 @@ def audio():
    # audio_file.save(file_path)
 
     return jsonify({'success': True, 'message': 'File uploaded successfully!'}), 200
+
+
+    
+
 
 if __name__ == '__main__':
     app.run()

@@ -1,8 +1,10 @@
 import requests
 
 class WebScraper:
-    def __init__(self):
+    def __init__(self,destino,archivo):
         self.html_content = None
+        self.fetch_html(destino)
+        self.save_to_file(archivo)
 
     def fetch_html(self, url):
         try:
@@ -32,9 +34,4 @@ class WebScraper:
 
 # Ejemplo de uso:
 if __name__ == "__main__":
-    scraper = WebScraper()
-    url = "https://sweetalert2.github.io/#timerProgressBar"
-    file_path = "webpagina.txt"
-    
-    scraper.fetch_html(url)
-    scraper.save_to_file(file_path)
+    scraper = WebScraper('https://www.graphviz.org/download/','fof.txt')

@@ -44,7 +44,7 @@ $(document).ready(function () {
     audio.play();
   }
 
-  function validar(){
+  function validar() {
     console.log("urias");
   }
 
@@ -172,7 +172,7 @@ $(document).ready(function () {
   }
 
   function filtrar(id, filtro) {
-    poder1 = $("#p1"+id).val();
+    poder1 = $("#p1" + id).val();
     conteo = conteo + 1;
     datos = datificar(id);
     //alert(poder1);
@@ -191,10 +191,10 @@ $(document).ready(function () {
     };
 
 
-    if(filtro == 8){
+    if (filtro == 8) {
       $.ajax({
         url: filtros[filtro],
-        data: { id: id, filtro: nombres[filtro],poder: poder1, idintegral: (conteo),},
+        data: { id: id, filtro: nombres[filtro], poder: poder1, idintegral: (conteo), },
         type: "POST",
         beforeSend: function () {
           Pace.restart();
@@ -235,7 +235,7 @@ $(document).ready(function () {
     } else {
       $.ajax({
         url: filtros[filtro],
-        data: { id: id, filtro: nombres[filtro],poder: poder1, idintegral: (conteo)},
+        data: { id: id, filtro: nombres[filtro], poder: poder1, idintegral: (conteo) },
         type: "POST",
         beforeSend: function () {
           Pace.restart();
@@ -253,7 +253,7 @@ $(document).ready(function () {
             icon: "success",
             confirmButtonText: "Ok",
           });
-  
+
           agregarElemento(conteo, 100, (conteo + "- " + "Resultado"));
           cambiarmodo(modo);
           identificar(
@@ -278,7 +278,7 @@ $(document).ready(function () {
       });
     }
 
-    
+
   }
 
   function actualizar(numero) {
@@ -372,6 +372,44 @@ $(document).ready(function () {
     });
   }
 
+  function actualizar6(numero) {
+    let datos2 = datificar3(numero);
+    let datos = datificar(numero);
+    $.ajax({
+      url: "/practica5",
+      data: datos2,
+      type: "POST",
+      beforeSend: function () {
+        Pace.restart();
+      },
+      complete: function () {
+        Pace.stop();
+      },
+      success: function (response) {
+        var urls = ["/static/data/" + (numero + "a.csv"), "/static/data/" + (numero + "b.csv"), "/static/data/" + (numero + "c.csv")];
+        var colores = ["#afafaf", "#31be0a", "#d400e7"];
+        identificartriple(
+          urls,
+          colores,
+          datos.destino,
+          "lines",
+          "scatter"
+        );
+      },
+      error: function (error) {
+        Swal.fire({
+          title: "Error ocurrido!",
+          confirmButtonColor: colorpr,
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: colorpr,
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
+      },
+    });
+  }
+
   function datificar(numero) {
     var amplitudid = "#da" + numero;
     var amplitudrealid = "#a" + numero;
@@ -434,6 +472,100 @@ $(document).ready(function () {
       corrimiento: $(corrimientoid).val(),
     };
   }
+
+  function datificar3(numero) {
+    var dest = "gra" + numero;
+    var tipoid = "#update" + numero;
+    var segundosid = "#sg" + numero;
+    var frecmueid = "#fm" + numero;
+    var frecogid = "#fs" + numero;
+
+    return {
+      destino: dest,
+      tipo: $(tipoid).attr("data-tipo"),
+      id: numero,
+      mue_mz: $(frecmueid).val(),
+      og_mz: $(frecogid).val(),
+      segundos: $(segundosid).val(),
+    };
+  }
+
+  function identificartriple(urls, colores, destino, lineas, tipo) {
+    var datosGrafica = [];
+
+    function agregarDatos(url, color, callback, linesest, tipeset) {
+      Papa.parse(url, {
+        download: true,
+        header: true,
+        dynamicTyping: true,
+        complete: function (results) {
+          var x = [];
+          var y = [];
+          results.data.forEach(function (dato) {
+            x.push(dato.x);
+            y.push(dato.y);
+          });
+
+          datosGrafica.push({
+            x: x,
+            y: y,
+            mode: linesest,
+            type: tipeset,
+            line: {
+              color: color,
+              width: 4,
+            },
+            marker: {
+              size: 0.04,
+              color: '#afafaf',
+              symbol: "X",
+            },
+            width: 0.04,
+          });
+
+          callback(); 
+        }
+      });
+    }
+
+    function procesarURLs(index) {
+      if (index < urls.length) {
+        linee = "lines"
+        tipoo = "scatter"
+        if (index == 0) {
+          linee = "markers"
+          tipoo = "bar"
+        }
+        agregarDatos(urls[index], colores[index], function () {
+          procesarURLs(index + 1);  
+        }, linee, tipoo);
+      } else {
+        var layout = {
+          title: "",
+          showlegend: false,
+          autosize: true,
+          plot_bgcolor: "#000000",
+          paper_bgcolor: "#000000",
+          xaxis: {
+            rangeslider: {},
+            color: "#FFFFFF",
+            gridcolor: "#888888",
+          },
+          yaxis: {
+            fixedrange: true,
+            color: "#FFFFFF",
+            gridcolor: "#888888",
+          },
+        };
+        // Grafica los datos cuando todos los archivos CSV se han procesado.
+        Plotly.newPlot(destino, datosGrafica, layout);
+      }
+    }
+
+    // Inicia el procesamiento de archivos CSV.
+    procesarURLs(0);
+  }
+
 
   function identificar(url, primario, destino, lineas, tipo) {
     Papa.parse(url, {
@@ -679,6 +811,57 @@ $(document).ready(function () {
                 </div>
                 <div class="col-2">
                     <h6 id="imgn${N}" class="text-white text-center mb-2"> 0 </h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="ffs${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Frecuencia de señal
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2">  </h6>
+                </div>
+                <div class="col-9">
+                    <input type="range" id="fs${N}" min="3" max="1000" value="3" step="1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='fs${N}';>
+                </div>
+                <div class="col-2">
+                    <h6 id="imgfs${N}" class="text-white text-center mb-2"> 3 </h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="ffm${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Frecuencia de muestreo
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2">  </h6>
+                </div>
+                <div class="col-9">
+                    <input type="range" id="fm${N}" min="3" max="1000" value="6" step="1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='fm${N}';>
+                </div>
+                <div class="col-2">
+                    <h6 id="imgfm${N}" class="text-white text-center mb-2"> 6 </h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="ssg${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Segundos
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2">  </h6>
+                </div>
+                <div class="col-9">
+                    <input type="range" id="sg${N}" min="0.01" max="10" value="2" step="0.01"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='sg${N}';>
+                </div>
+                <div class="col-2">
+                    <h6 id="imgsg${N}" class="text-white text-center mb-2"> 2 </h6>
                 </div>
             </div>
         </div>
@@ -1034,7 +1217,7 @@ $(document).ready(function () {
   }
 
   function operar() {
-    
+
     const operaciones = {
       1: "suma",
       2: "resta",
@@ -1181,6 +1364,8 @@ $(document).ready(function () {
       11: 1,
       12: 1,
       13: 2,
+      14: 101,
+      15: 102,
       18: 18,
       19: 14,
       20: 15,
@@ -1195,11 +1380,13 @@ $(document).ready(function () {
       3: ["cc", "ddi", "ddf", "ee", "ff", "ii", "jj", "kk"],
       4: ["dda", "gg", "hh", "cc", "ddi", "ddf", "ii", "jj", "kk"],
       14: ["nn", "oo", "pp", "ii"],
-      15: ["dda", "qq", "rr", "ss", "uu","pp1","tt", "vv", "ii"],
+      15: ["dda", "qq", "rr", "ss", "uu", "pp1", "tt", "vv", "ii"],
       16: ["ww"],
       17: ["xx"],
       18: ["ddi", "ddf", "ii"],
       100: ["ii"],
+      101: ["ssg", "ffm"],
+      102: ["ffs", "ffm", "ssg"],
     };
 
     const graf = tipoToGraf[tipo];
@@ -1213,11 +1400,21 @@ $(document).ready(function () {
 
   $(document).on("click", ".recolector", function () {
     var numero = $(this).attr("data-id");
-    if (modo == 2){
+    var tipo = $(this).attr("data-tipo");
+
+    if (modo == 2) {
       actualizar2(numero);
     } else {
       actualizar(numero);
     }
+  });
+
+  $(document).on("click", ".practica5", function () {
+    var numero = $(this).attr("data-id");
+    var tipo = $(this).attr("data-tipo");
+
+    actualizar6(numero);
+
   });
 
   function getnombre(tipo) {
@@ -1265,6 +1462,12 @@ $(document).ready(function () {
       case 13:
         tipoe = "Impulso triangular";
         break;
+      case 14:
+        tipoe = "Sen(4pi * t) + Sen(8pi * t)";
+        break;
+      case 15:
+        tipoe = "Sinusoidal pura";
+        break;
     }
     return tipoe;
   }
@@ -1279,60 +1482,116 @@ $(document).ready(function () {
       mandarAudio(conteo);
     }
 
-    $.ajax({
-      url: "/datos",
-      data: {
-        amplitud: 1,
-        amplitudreal: 1,
-        frecuencia: 1,
-        muestration: 1000,
-        periodo: 1,
-        sigma: 0,
-        omega: 0,
-        frecuencia_angular: 0,
-        angulo_fase: 0,
-        desplazamiento: 0,
-        par: 0,
-        continuidad: 0,
-        tipo: elec,
-        id: conteo,
-        esc_tiempo: 0,
-        reflexion: 0,
-        corrimiento: 0,
-        inicio: -100,
-        fin: 100,
-      },
-      type: "POST",
-      beforeSend: function () {
-        Pace.restart();
-      },
-      complete: function () {
-        Pace.stop();
-      },
-      success: function (response) {
-        //alert(conteo);
-        agregarElemento(conteo, elec, tipoe);
-        cambiarmodo(modo);
-        identificar(
-          "/static/data/" + conteo + ".csv",
-          colorog,
-          destino,
-          "lines",
-          "scatter"
-        );
-      },
-      error: function (error) {
-        Swal.fire({
-          title: "Error ocurrido!",
-          confirmButtonColor: colorpr,
-          background: "#212529",
-          color: "#ffffff",
-          iconColor: colorpr,
-          icon: "error",
-          confirmButtonText: "Ok",
-        });
-      },
-    });
+    if (elec == 15 || elec == 14) {
+
+      $.ajax({
+        url: "/practica5",
+        data: {
+          tipo: elec,
+          id: conteo,
+          mue_mz: 3,
+          og_mz: 3,
+          segundos: 2,
+        },
+        type: "POST",
+        beforeSend: function () {
+          Pace.restart();
+        },
+        complete: function () {
+          Pace.stop();
+        },
+        success: function (response) {
+          //alert(conteo);
+          agregarElemento(conteo, elec, tipoe);
+          cambiarmodo(modo);
+          var urls = ["/static/data/" + (conteo + "a.csv"),"/static/data/" +  (conteo + "b.csv"),"/static/data/" +  (conteo + "c.csv")];
+          var colores = ["#afafaf", "#31be0a", "#d400e7"];
+          identificartriple(
+            urls,
+            colores,
+            destino,
+            "lines",
+            "scatter"
+          );
+
+          $("#update" + conteo).removeClass("recolector");
+          $("#update" + conteo).addClass("practica5");
+
+        },
+        error: function (error) {
+          Swal.fire({
+            title: "Error ocurrido!",
+            confirmButtonColor: colorpr,
+            background: "#212529",
+            color: "#ffffff",
+            iconColor: colorpr,
+            icon: "error",
+            confirmButtonText: "Ok",
+          });
+        },
+      });
+
+      
+
+    } else {
+
+      $.ajax({
+        url: "/datos",
+        data: {
+          amplitud: 1,
+          amplitudreal: 1,
+          frecuencia: 1,
+          muestration: 1000,
+          periodo: 1,
+          sigma: 0,
+          omega: 0,
+          frecuencia_angular: 0,
+          angulo_fase: 0,
+          desplazamiento: 0,
+          par: 0,
+          continuidad: 0,
+          tipo: elec,
+          id: conteo,
+          esc_tiempo: 0,
+          reflexion: 0,
+          corrimiento: 0,
+          inicio: -100,
+          fin: 100,
+        },
+        type: "POST",
+        beforeSend: function () {
+          Pace.restart();
+        },
+        complete: function () {
+          Pace.stop();
+        },
+        success: function (response) {
+          //alert(conteo);
+          agregarElemento(conteo, elec, tipoe);
+          cambiarmodo(modo);
+          identificar(
+            "/static/data/" + conteo + ".csv",
+            colorog,
+            destino,
+            "lines",
+            "scatter"
+          );
+        },
+        error: function (error) {
+          Swal.fire({
+            title: "Error ocurrido!",
+            confirmButtonColor: colorpr,
+            background: "#212529",
+            color: "#ffffff",
+            iconColor: colorpr,
+            icon: "error",
+            confirmButtonText: "Ok",
+          });
+        },
+      });
+    }
+
+
   });
 
   $(document)
@@ -1514,7 +1773,7 @@ $(document).ready(function () {
     $("#img" + id).text($(this).val());
   });
 
-  
+
 
 
   audio.addEventListener("loadedmetadata", function () {
@@ -1525,9 +1784,9 @@ $(document).ready(function () {
       title: "Reproduciendo...",
       timer: duracion,
       timerProgressBar: true,
-      showConfirmButton: false, 
-      showCancelButton: false, 
-      allowOutsideClick: false, 
+      showConfirmButton: false,
+      showCancelButton: false,
+      allowOutsideClick: false,
       allowEscapeKey: false,
       background: "#212529",
       color: colorpr,
