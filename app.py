@@ -29,7 +29,7 @@ def datos():
     amplitud = request.form.get('amplitud')
     amplitudreal = request.form.get('amplitudreal')
 
-    amplitud = int(amplitud) * int(amplitudreal)
+    amplitud = float(amplitud) * float(amplitudreal)
 
     frecuencia = request.form.get('frecuencia')
     muestration = request.form.get('muestration')
@@ -48,7 +48,7 @@ def datos():
 
     print(id)
     #time.sleep(10)
-    generar_grafica(id, str(tipo), float(amplitud),float(periodo),int(muestration),float(desplazamiento),float(inicio), float(fin), (float(sigma)),(float(omega)),float(frec_ang),float(angulo_fase),str(par),int(continuidad))
+    generar_grafica(id, str(tipo), float(amplitud),float(periodo),int(muestration),-1*float(desplazamiento),float(inicio), float(fin), (float(sigma)),(float(omega)),float(frec_ang),float(angulo_fase),str(par),int(continuidad))
         
     return "no"
 
@@ -57,7 +57,6 @@ def urias():
     global v
     json_data = request.get_json()
 
-        # Accede al valor de "c" en el JSON
     datosA = json_data['datosA']
     datosB = json_data['datosB']
     operacion = json_data['tipo']

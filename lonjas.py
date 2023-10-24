@@ -1,4 +1,7 @@
-,y,e,g,u,q,a,b,j,s,n,o,i,x,r,t,z,m,k,f,w,l,h,p,v,c,d
+import csv
+from io import StringIO
+
+data_str = """
 q0,q0,q124yq0,q125yq0,q0yq126,q0,q127yq0,q128yq0,q0,q0yq129,q0,q0,q130yq0,q0,q0yq131,q0yq132,q0,q0,q0,q133yq0,q0yq134,q135yq0,q0,q0,q0yq136,q137yq0,q138yq0
 q124yq0,q0,q124yq0,q125yq0,q0yq126,q0,q127yq0,q128yq0,q0,q0yq129,q123yq0,q0,q130yq0,q122yq0,q0yq131,q0yq132,q0,q0,q0,q133yq0,q0yq134,q121yq135yq0,q0,q0,q0yq136,q137yq0,q138yq0
 q125yq0,q0,q124yq0,q125yq0,q0yq126,q0,q127yq0,q128yq0,q0,q0yq129,q0,q120yq0,q130yq0,q0,q0yq131,q0yq132,q0,q0,q0,q133yq0,q0yq134,q135yq0,q0,q0,q0yq136,q137yq0,q138yq0
@@ -141,3 +144,41 @@ q138yq0yq5yq4,q0,q100yq124yq0,q125yq0,q0yq126,q0,q127yq0,q128yq0,q0,q0yq129,q0,q
 q0yq131yq3,q0,q124yq0yq110,q125yq0,q0yq126,q0,q127yq0,q128yq0,q0,q0yq129,q0,q0,q130yq0,q0,q0yq131,q0yq132,q0,q0,q0,q133yq0,q0yq134,q135yq0,q0,q0,q0yq136,q137yq0,q138yq0
 q124yq0yq2,q0,q124yq0,q125yq0,q0yq126,q0,q127yq0,q128yq0,q0,q0yq129,q123yq0,q0,q130yq0,q122yq0,q0yq131,q0yq132,q0,q0,q0,q133yq0,q0yq134,q121yq135yq0,q0,q0,q0yq136,q137yq0,q138yq0
 q1yq124yq0,q0,q124yq0,q125yq0,q0yq126,q0,q127yq0,q128yq0,q0,q0yq129,q123yq0,q0,q130yq0,q122yq0,q0yq131,q0yq132,q0,q0,q0,q133yq0,q0yq134,q121yq135yq0,q0,q0,q0yq136,q137yq0,q138yq0
+"""  # Esto es solo un ejemplo, puedes sustituir data_str con la cadena completa
+
+f = StringIO(data_str)
+reader = csv.reader(f)
+data = list(reader)
+
+# Identificar todos los estados únicos
+estados = set()
+for row in data[1:]:  # Excluyendo la primera fila (encabezado)
+    for cell in row:
+        # Dividir por "y" si es un estado conjugado
+        partes = cell.split('y')
+        for parte in partes:
+            estados.add(parte)
+
+# Ordenar e invertir los estados
+estados_ordenados = sorted(list(estados), key=lambda x: int(x[1:]), reverse=True)  # Ordenar por el número
+
+# Crear diccionario de mapeo
+mapeo = {}
+for i, estado in enumerate(estados_ordenados):
+    mapeo[estado] = f'q{i}'
+
+# Reemplazar en el CSV
+data_nueva = [data[0]]  # Agregamos el encabezado
+for row in data[1:]:
+    nueva_fila = []
+    for cell in row:
+        partes = cell.split('y')
+        nuevo_estado = 'y'.join([mapeo.get(parte, parte) for parte in partes])
+        nueva_fila.append(nuevo_estado)
+    data_nueva.append(nueva_fila)
+
+# Convertir a cadena y mostrar
+output = StringIO()
+writer = csv.writer(output)
+writer.writerows(data_nueva)
+print(output.getvalue())
