@@ -104,4 +104,106 @@ def escrbir_csv(nombre_archivo, encabezado_x, encabezado_y, eje_x, eje_y):
 #paso2(2,4,8,1)
 
 
+def p33(tipo, bits):
+    def generar_senal(f0, t): # Genera 'n' puntos equidistantes
+        return 10 * np.sin(2 * np.pi * f0 * t)
+
+    def cuantificar(senal, bits):
+        """Cuantifica una señal en base a la cantidad de bits especificada."""
+        niveles = 2**bits
+        maximo = np.max(senal)
+        minimo = np.min(senal)
+        paso = (maximo - minimo) / niveles
+        senal_cuantificada = np.floor((senal - minimo) / paso) * paso + minimo
+        return senal_cuantificada
+    
+    def cuantificar2(senal, bits):
+        """Cuantifica una señal en base a la cantidad de bits especificada."""
+        niveles = 2**bits
+        maximo = np.max(senal)
+        minimo = np.min(senal)
+        paso = (maximo - minimo) / niveles
+        senal_cuantificada = np.round((senal - minimo) / paso) * paso + minimo
+        return senal_cuantificada
+
+    def interpolacion(t, t_muestreo, x_muestreada):
+        x_interp = np.zeros_like(t)
+        for n, x_n in enumerate(x_muestreada):
+            g = np.sin(np.pi * 200 * (t - t_muestreo[n])) / (np.pi * 200 * (t - t_muestreo[n]))
+            x_interp += x_n * g
+        return x_interp
+    
+    # Ejemplo de uso:
+    t = np.linspace(0, 2, 200)
+    tm = np.linspace(0, 2, 50)
+    senal = generar_senal(50, t)
+    senal_muestreada = generar_senal(50, tm)  # Muestreo a los puntos especificados
+    if (tipo == '1'):
+        senal_cuantificada = cuantificar2(senal_muestreada, bits)
+    else:
+        senal_cuantificada = cuantificar(senal_muestreada, bits)
+    error = senal_muestreada - senal_cuantificada
+    recuperada = interpolacion(t, tm, senal_cuantificada)  # Usar tm en la interpolación
+    
+    
+    plt.figure(figsize=(12, 10), facecolor='black')  # fondo negro para la figura
+
+    # Señal muestreada
+    plt.subplot(2, 2, 1, facecolor='black')  # fondo negro para el subplot
+    plt.plot(tm, senal_muestreada, label='x(n)', color='purple')
+    plt.xlabel('Tiempo (s)', color='white')
+    plt.ylabel('Amplitud', color='white')
+    plt.title('Señal Muestreada', color='white')
+    plt.legend()
+    plt.grid(True, color='gray')
+    plt.tick_params(axis='both', colors='white')
+
+    # Error
+    plt.subplot(2, 2, 2, facecolor='black')
+    plt.plot(tm, error, label='e(n)', color='green')
+    plt.xlabel('Tiempo (s)', color='white')
+    plt.ylabel('Amplitud', color='white')
+    plt.title('Error', color='white')
+    plt.legend()
+    plt.grid(True, color='gray')
+    plt.tick_params(axis='both', colors='white')
+
+    # Señal recuperada
+    plt.subplot(2, 2, 3, facecolor='black')
+    plt.plot(t, recuperada, label='Recuperada', color='red')
+    plt.xlabel('Tiempo (s)', color='white')
+    plt.ylabel('Amplitud', color='white')
+    plt.title('Señal Recuperada', color='white')
+    plt.legend()
+    plt.grid(True, color='gray')
+    plt.tick_params(axis='both', colors='white')
+
+    # Señal cuantificada
+    plt.subplot(2, 2, 4, facecolor='black')
+    plt.stem(tm, senal_cuantificada, label='xQ(n)', linefmt='cyan', markerfmt='o', basefmt="gray")  # Cambiamos colores para el stem
+    plt.xlabel('Tiempo (s)', color='white')
+    plt.ylabel('Amplitud', color='white')
+    plt.title('Señal Cuantificada', color='white')
+    plt.legend()
+    plt.grid(True, color='gray')
+    plt.tick_params(axis='both', colors='white')
+
+    # Ajusta el layout para que no haya superposición
+    plt.tight_layout()
+    
+    plt.savefig("static/data/" + (str(1) + '.png'), dpi=300, bbox_inches='tight', facecolor='black')
+
+
+
+
+p33(1,2)
+
+
+
+
+
+
+
+
+
 
