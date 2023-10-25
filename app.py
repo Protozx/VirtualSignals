@@ -54,7 +54,7 @@ def datos():
     return "no"
 
 @app.route('/urias', methods=['POST'])
-def urias():
+def urias(): 
     global v
     json_data = request.get_json()
 
@@ -171,6 +171,18 @@ def practica5():
         paso1(float(segundos),float(mue_mz),id)
     else:
         paso2(float(segundos),float(og_mz),float(mue_mz),id)
+    
+
+    return v
+
+@app.route('/practica7', methods=['POST'])
+def practica7():
+    tipo = request.form.get('tipo')
+    id = request.form.get('id')
+    bits = request.form.get('bits')
+    tipotipo = request.form.get('tipotipo')
+    josue = request.form.get('josue')
+    p33(int(josue),int(tipotipo),int(bits),id)
     
 
     return v

@@ -12,6 +12,7 @@ $(document).ready(function () {
   var duracion = 0;
   var colorog = "#d400e7";
   var colorpr = "#3cff6d";
+  var grosor = 0.04
 
   Pace.options = {
     ajax: false,
@@ -54,7 +55,6 @@ $(document).ready(function () {
       audio.currentTime = 0;
     }
   }
-
 
   function startRecording() {
     navigator.mediaDevices
@@ -190,11 +190,15 @@ $(document).ready(function () {
       8: "reflexion",
     };
 
-
     if (filtro == 8) {
       $.ajax({
         url: filtros[filtro],
-        data: { id: id, filtro: nombres[filtro], poder: poder1, idintegral: (conteo), },
+        data: {
+          id: id,
+          filtro: nombres[filtro],
+          poder: poder1,
+          idintegral: conteo,
+        },
         type: "POST",
         beforeSend: function () {
           Pace.restart();
@@ -215,7 +219,7 @@ $(document).ready(function () {
           identificar(
             "/static/data/" + id + ".csv",
             colorog,
-            ("gra" + id),
+            "gra" + id,
             "lines",
             "scatter"
           );
@@ -235,7 +239,12 @@ $(document).ready(function () {
     } else {
       $.ajax({
         url: filtros[filtro],
-        data: { id: id, filtro: nombres[filtro], poder: poder1, idintegral: (conteo) },
+        data: {
+          id: id,
+          filtro: nombres[filtro],
+          poder: poder1,
+          idintegral: conteo,
+        },
         type: "POST",
         beforeSend: function () {
           Pace.restart();
@@ -254,12 +263,12 @@ $(document).ready(function () {
             confirmButtonText: "Ok",
           });
 
-          agregarElemento(conteo, 100, (conteo + "- " + "Resultado"));
+          agregarElemento(conteo, 100, conteo + "- " + "Resultado");
           cambiarmodo(modo);
           identificar(
             "/static/data/" + conteo + ".csv",
             colorog,
-            ("gra" + conteo),
+            "gra" + conteo,
             "lines",
             "scatter"
           );
@@ -277,8 +286,6 @@ $(document).ready(function () {
         },
       });
     }
-
-
   }
 
   function actualizar(numero) {
@@ -386,15 +393,13 @@ $(document).ready(function () {
         Pace.stop();
       },
       success: function (response) {
-        var urls = ["/static/data/" + (numero + "a.csv"), "/static/data/" + (numero + "b.csv"), "/static/data/" + (numero + "c.csv")];
+        var urls = [
+          "/static/data/" + (numero + "a.csv"),
+          "/static/data/" + (numero + "b.csv"),
+          "/static/data/" + (numero + "c.csv"),
+        ];
         var colores = ["#afafaf", "#31be0a", "#d400e7"];
-        identificartriple(
-          urls,
-          colores,
-          datos.destino,
-          "lines",
-          "scatter"
-        );
+        identificartriple(urls, colores, datos.destino, "lines", "scatter");
       },
       error: function (error) {
         Swal.fire({
@@ -408,6 +413,50 @@ $(document).ready(function () {
         });
       },
     });
+  }
+
+  function setImageToDiv(divId, imageUrl) {
+    
+    var cacheBuster = new Date().getTime();
+    var imageUrlWithCacheBuster = imageUrl + "?v=" + cacheBuster;
+    $(divId).html('<img src="' + imageUrlWithCacheBuster + '" alt="Imagen" class="img-fluid">');
+  }
+
+  // Uso:
+  // setImageToDiv('miDiv', 'http://ejemplo.com/imagen.jpg');
+
+  function actualizar7(numero) {
+    let datos2 = datificar4(numero);
+    //let datos = datificar(numero);
+    Pace.restart();
+    $.ajax({
+      url: "/practica7",
+      data: datos2,
+      type: "POST",
+      beforeSend: function () {
+        
+      },
+      complete: function () {
+        
+      },
+      success: function (response) {
+        setImageToDiv(("#imagen" + numero),"/static/data/"+numero+".png")
+        Pace.stop();
+      },
+      error: function (error) {
+        Pace.stop();
+        Swal.fire({
+          title: "Error ocurrido!",
+          confirmButtonColor: colorpr,
+          background: "#212529",
+          color: "#ffffff",
+          iconColor: colorpr,
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
+      },
+    });
+
   }
 
   function datificar(numero) {
@@ -479,6 +528,7 @@ $(document).ready(function () {
     var segundosid = "#sg" + numero;
     var frecmueid = "#fm" + numero;
     var frecogid = "#fs" + numero;
+    grosor = 0.008 / $(frecmueid).val()
 
     return {
       destino: dest,
@@ -487,6 +537,24 @@ $(document).ready(function () {
       mue_mz: $(frecmueid).val(),
       og_mz: $(frecogid).val(),
       segundos: $(segundosid).val(),
+
+    };
+  }
+
+  function datificar4(numero) {
+    var dest = "gra" + numero;
+    var tipoid = "#update" + numero;
+    var bitsid = "#nb" + numero;
+    var tipotipoid = "#im" + numero;
+    var josue = "#josu" + numero; //la frecuencia
+    
+    return {
+      destino: dest,
+      tipo: $(tipoid).attr("data-tipo"),
+      id: numero,
+      bits: $(bitsid).val(),
+      tipotipo: $(tipotipoid).val(),
+      josue: $(josue).val(),
     };
   }
 
@@ -513,32 +581,38 @@ $(document).ready(function () {
             type: tipeset,
             line: {
               color: color,
-              width: 4,
+              width: 1,
             },
             marker: {
-              size: 0.04,
-              color: '#afafaf',
+              size: grosor,
+              color: "#afafaf",
               symbol: "X",
             },
-            width: 0.04,
+            width: grosor,
           });
 
-          callback(); 
-        }
+          callback();
+        },
       });
     }
 
     function procesarURLs(index) {
       if (index < urls.length) {
-        linee = "lines"
-        tipoo = "scatter"
+        linee = "lines";
+        tipoo = "scatter";
         if (index == 0) {
-          linee = "markers"
-          tipoo = "bar"
+          linee = "markers";
+          tipoo = "bar";
         }
-        agregarDatos(urls[index], colores[index], function () {
-          procesarURLs(index + 1);  
-        }, linee, tipoo);
+        agregarDatos(
+          urls[index],
+          colores[index],
+          function () {
+            procesarURLs(index + 1);
+          },
+          linee,
+          tipoo
+        );
       } else {
         var layout = {
           title: "",
@@ -565,7 +639,6 @@ $(document).ready(function () {
     // Inicia el procesamiento de archivos CSV.
     procesarURLs(0);
   }
-
 
   function identificar(url, primario, destino, lineas, tipo) {
     Papa.parse(url, {
@@ -866,7 +939,41 @@ $(document).ready(function () {
             </div>
         </div>
 
-        
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="josue${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Frecuencia
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2">  </h6>
+                </div>
+                <div class="col-9">
+                    <input type="range" id="josu${N}" min="10" max="200" value="50" step="1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='josu${N}';>
+                </div>
+                <div class="col-2">
+                    <h6 id="imgjosu${N}" class="text-white text-center mb-2"> 50 </h6>
+                </div>
+            </div>
+        </div>   
+
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="nnb${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Nùmero de bits
+            </h5>
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                <div class="col-1">
+                    <h6 class="text-white text-center mb-2">  </h6>
+                </div>
+                <div class="col-9">
+                    <input type="range" id="nb${N}" min="1" max="10" value="2" step="1"
+                        class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='nb${N}';>
+                </div>
+                <div class="col-2">
+                    <h6 id="imgnb${N}" class="text-white text-center mb-2"> 2 </h6>
+                </div>
+            </div>
+        </div>        
 
         <div class="container-fluid mt-5 mb-4 d-none" id="pp${N}">    
             <h5 class="text-white text-center mt-2 mb-4">Corrimiento en el tiempo
@@ -1081,6 +1188,15 @@ $(document).ready(function () {
             </select>
         </div>
 
+        <div class="container-fluid mt-5 mb-3 d-none" id="iim${N}">    
+            <h5 class="text-white text-center mt-2 mb-4">Tipo cuantificaciòn
+            </h5>
+            <select class="form-select mi-input custom-input rounded-5 w-100 ojo" id="im${N}">
+                <option value="0"> Redondeo </option>
+                <option value="1"> Truncar </option>
+            </select>
+        </div>
+
         <div class="container-fluid mt-4 mb-3 d-none" id="kk${N}">    
             <h5 class="text-white text-center mt-2 mb-4">Forma
             </h5>
@@ -1103,7 +1219,7 @@ $(document).ready(function () {
             </h2>
         </div>
 
-
+        <div id="imagen${N}" class="ojo"></div>
         <div id="gra${N}" class="rounded-5 mt-5 mb-5 ms-3 me-5 ojo"></div>
 
         <div class="row d-flex align-content-center justify-content-center align-items-center">
@@ -1217,7 +1333,6 @@ $(document).ready(function () {
   }
 
   function operar() {
-
     const operaciones = {
       1: "suma",
       2: "resta",
@@ -1229,7 +1344,7 @@ $(document).ready(function () {
 
     $.ajax({
       url: "/urias",
-      contentType: 'application/json',
+      contentType: "application/json",
       data: JSON.stringify({
         datosA: datos1,
         datosB: datos2,
@@ -1253,16 +1368,15 @@ $(document).ready(function () {
           icon: "success",
           button: "Aceptar",
         });
-        agregarElemento(conteo, 100, (conteo + "- " + "Resultado"));
+        agregarElemento(conteo, 100, conteo + "- " + "Resultado");
         cambiarmodo(modo);
         identificar(
           "/static/data/" + conteo + ".csv",
           colorog,
-          ("gra" + conteo),
+          "gra" + conteo,
           "lines",
           "scatter"
         );
-
       },
       error: function (error) {
         Swal.fire({
@@ -1366,6 +1480,7 @@ $(document).ready(function () {
       13: 2,
       14: 101,
       15: 102,
+      16: 103,
       18: 18,
       19: 14,
       20: 15,
@@ -1387,6 +1502,7 @@ $(document).ready(function () {
       100: ["ii"],
       101: ["ssg", "ffm"],
       102: ["ffs", "ffm", "ssg"],
+      103: ["iim", "nnb", "josue"],
     };
 
     const graf = tipoToGraf[tipo];
@@ -1414,7 +1530,13 @@ $(document).ready(function () {
     var tipo = $(this).attr("data-tipo");
 
     actualizar6(numero);
+  });
 
+  $(document).on("click", ".practica5b", function () {
+    var numero = $(this).attr("data-id");
+    var tipo = $(this).attr("data-tipo");
+
+    actualizar7(numero);
   });
 
   function getnombre(tipo) {
@@ -1468,6 +1590,9 @@ $(document).ready(function () {
       case 15:
         tipoe = "Sinusoidal pura";
         break;
+      case 16:
+        tipoe = "Practica 5b";
+        break;
     }
     return tipoe;
   }
@@ -1475,6 +1600,7 @@ $(document).ready(function () {
   $(document).on("click", "#agregar", function () {
     conteo = conteo + 1;
     var destino = "gra" + conteo;
+    var imagen = "#imagen" + conteo;
     var elec = parseInt($("#senal").val());
     var tipoe = "" + (conteo - 1) + "- " + getnombre(elec);
 
@@ -1482,8 +1608,46 @@ $(document).ready(function () {
       mandarAudio(conteo);
     }
 
-    if (elec == 15 || elec == 14) {
-
+    if (elec == 16){
+      $.ajax({
+        url: "/practica7",
+        data: {
+          destino: imagen,
+          tipo: 16,
+          id: conteo,
+          bits: 2,
+          tipotipo: 0,
+          josue: 50,
+        },
+        type: "POST",
+        beforeSend: function () {
+          Pace.restart();
+        },
+        complete: function () {
+          
+        },
+        success: function (response) {
+          agregarElemento(conteo,16,"Practica5b")
+          cambiarmodo(modo);
+          setImageToDiv(imagen,"/static/data/"+conteo+".png")
+          $("#update" + conteo).removeClass("recolector");
+          $("#update" + conteo).addClass("practica5b");
+          Pace.stop();
+        },
+        error: function (error) {
+          Pace.stop();
+          Swal.fire({
+            title: "Error ocurrido!",
+            confirmButtonColor: "#555555",
+            background: "#212529",
+            color: "#ffffff",
+            iconColor: "#555555",
+            icon: "error",
+            confirmButtonText: "Ok",
+          });
+        },
+      });
+    }else if (elec == 15 || elec == 14) {
       $.ajax({
         url: "/practica5",
         data: {
@@ -1504,19 +1668,16 @@ $(document).ready(function () {
           //alert(conteo);
           agregarElemento(conteo, elec, tipoe);
           cambiarmodo(modo);
-          var urls = ["/static/data/" + (conteo + "a.csv"),"/static/data/" +  (conteo + "b.csv"),"/static/data/" +  (conteo + "c.csv")];
+          var urls = [
+            "/static/data/" + (conteo + "a.csv"),
+            "/static/data/" + (conteo + "b.csv"),
+            "/static/data/" + (conteo + "c.csv"),
+          ];
           var colores = ["#afafaf", "#31be0a", "#d400e7"];
-          identificartriple(
-            urls,
-            colores,
-            destino,
-            "lines",
-            "scatter"
-          );
+          identificartriple(urls, colores, destino, "lines", "scatter");
 
           $("#update" + conteo).removeClass("recolector");
           $("#update" + conteo).addClass("practica5");
-
         },
         error: function (error) {
           Swal.fire({
@@ -1530,11 +1691,7 @@ $(document).ready(function () {
           });
         },
       });
-
-      
-
     } else {
-
       $.ajax({
         url: "/datos",
         data: {
@@ -1590,8 +1747,6 @@ $(document).ready(function () {
         },
       });
     }
-
-
   });
 
   $(document)
@@ -1772,9 +1927,6 @@ $(document).ready(function () {
     id = $(this).attr("data-id");
     $("#img" + id).text($(this).val());
   });
-
-
-
 
   audio.addEventListener("loadedmetadata", function () {
     let durationInSeconds = audio.duration;

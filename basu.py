@@ -104,7 +104,7 @@ def escrbir_csv(nombre_archivo, encabezado_x, encabezado_y, eje_x, eje_y):
 #paso2(2,4,8,1)
 
 
-def p33(tipo, bits):
+def p33(josue, tipo, bits,idd):
     def generar_senal(f0, t): # Genera 'n' puntos equidistantes
         return 10 * np.sin(2 * np.pi * f0 * t)
 
@@ -134,8 +134,8 @@ def p33(tipo, bits):
         return x_interp
     
     # Ejemplo de uso:
-    t = np.linspace(0, 2, 200)
-    tm = np.linspace(0, 2, 50)
+    t = np.linspace(0, 2, 600)
+    tm = np.linspace(0, 2, josue)
     senal = generar_senal(50, t)
     senal_muestreada = generar_senal(50, tm)  # Muestreo a los puntos especificados
     if (tipo == '1'):
@@ -191,17 +191,16 @@ def p33(tipo, bits):
     # Ajusta el layout para que no haya superposición
     plt.tight_layout()
     
-    plt.savefig("static/data/" + (str(1) + '.png'), dpi=300, bbox_inches='tight', facecolor='black')
+    plt.savefig("static/data/" + (str(idd) + '.png'), dpi=300, bbox_inches='tight', facecolor='black')
 
 
 
-
-p33(1,2)
-
-
+#p33('0',2,1)
+#p33('1',2,2)
 
 
 
+ 
 
 
 
