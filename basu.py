@@ -134,8 +134,8 @@ def p33(josue, tipo, bits,idd):
         return x_interp
     
     # Ejemplo de uso:
-    t = np.linspace(0, 2, 600)
-    tm = np.linspace(0, 2, josue)
+    t = np.linspace(0, 2, 1000)
+    tm = np.linspace(0, 2, josue*70)
     senal = generar_senal(50, t)
     senal_muestreada = generar_senal(50, tm)  # Muestreo a los puntos especificados
     if (tipo == '1'):

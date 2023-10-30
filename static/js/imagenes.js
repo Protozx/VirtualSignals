@@ -12,7 +12,7 @@ $(document).ready(function () {
   var duracion = 0;
   var colorog = "#d400e7";
   var colorpr = "#3cff6d";
-  var grosor = 0.04
+  var grosor = 0.008
 
   Pace.options = {
     ajax: false,
@@ -398,7 +398,7 @@ $(document).ready(function () {
           "/static/data/" + (numero + "b.csv"),
           "/static/data/" + (numero + "c.csv"),
         ];
-        var colores = ["#afafaf", "#31be0a", "#d400e7"];
+        var colores = ["#47fddf", "#31be0a", "#d400e7"];
         identificartriple(urls, colores, datos.destino, "lines", "scatter");
       },
       error: function (error) {
@@ -585,7 +585,7 @@ $(document).ready(function () {
             },
             marker: {
               size: grosor,
-              color: "#afafaf",
+              color: "#4d6dca",
               symbol: "X",
             },
             width: grosor,
@@ -1034,7 +1034,7 @@ $(document).ready(function () {
                     <h6 class="text-white text-center mb-2">  </h6>
                 </div>
                 <div class="col-9">
-                    <input type="range" id="p1${N}" min="0.01" max="1" value="0.01" step="0.01"
+                    <input type="range" id="p1${N}" min="0.00001" max="0.9999" value="0.01" step="0.00001"
                         class="form-control mi-input custom-input rounded-5 w-100 mb-2 deslice gordo" data-id='p1${N}';>
                 </div>
                 <div class="col-2">
@@ -1673,7 +1673,7 @@ $(document).ready(function () {
             "/static/data/" + (conteo + "b.csv"),
             "/static/data/" + (conteo + "c.csv"),
           ];
-          var colores = ["#afafaf", "#31be0a", "#d400e7"];
+          var colores = ["#47fddf", "#31be0a", "#d400e7"];
           identificartriple(urls, colores, destino, "lines", "scatter");
 
           $("#update" + conteo).removeClass("recolector");
