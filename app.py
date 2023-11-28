@@ -5,6 +5,7 @@ from elemental2 import *
 from basu import *
 from flask import jsonify
 import json
+import time
 #import time
 
 
@@ -56,6 +57,11 @@ def datos():
 @app.route('/urias', methods=['POST'])
 def urias(): 
     global v
+    
+    inicio = time.time()
+
+
+    fin = time.time()
     json_data = request.get_json()
 
     datosA = json_data['datosA']
@@ -110,6 +116,8 @@ def urias():
     # a_value = data1_dict.get('a')
     
     #operar_senales(datosA, datosB, operacion)
+    fin = time.time()
+    v = str(round(fin - inicio, 4))
     return v
 
 @app.route('/filtrodel1', methods=['POST'])

@@ -4,6 +4,7 @@ import csv
 import pandas as pd
 import os
 from scipy.integrate import cumtrapz
+from scipy.signal import convolve
 
 
 def hallar_intervalos(inicio_A, inicio_B, fin_A, fin_B):
@@ -17,6 +18,49 @@ def hallar_intervalos(inicio_A, inicio_B, fin_A, fin_B):
     else:
         maximo = fin_B
     return minimo, maximo
+
+
+def convolucionar_senales(paquete_factA, paquete_factB):
+    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+
+    # Asumiendo que df_factA y df_factB tienen la misma longitud y los mismos intervalos de 'x'
+    y_conv = convolve(df_factA['y'], df_factB['y'], mode='full')
+
+    # Generar el nuevo eje 'x' para la señal convolucionada
+    # Esto depende de cómo se definan los ejes de tiempo en tu caso específico
+    # Aquí hay un ejemplo simple que asume un espaciado uniforme y comienza en 0
+    n = len(y_conv)
+    x_conv = np.linspace(0, n-1, n)
+
+    return x_conv, y_conv
+
+def convolucionar_senales_manualmente(paquete_factA, paquete_factB):
+    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+
+    # Extraer los arrays de valores de y
+    y_A = df_factA['y'].values
+    y_B = df_factB['y'].values
+
+    # Longitudes de las señales
+    len_A = len(y_A)
+    len_B = len(y_B)
+
+    # Longitud del resultado de la convolución
+    len_conv = len_A + len_B - 1
+
+    # Inicializar el resultado de la convolución
+    y_conv = np.zeros(len_conv)
+
+    # Realizar la convolución manualmente
+    for i in range(len_conv):
+        for j in range(len_B):
+            if i - j >= 0 and i - j < len_A:
+                y_conv[i] += y_A[i - j] * y_B[j]
+
+    # Generar el nuevo eje 'x' para la señal convolucionada
+    x_conv = np.linspace(0, len_conv - 1, len_conv)
+
+    return x_conv, y_conv
 
 
 def filtrar_menores_inicio(df, inicio):
@@ -66,6 +110,10 @@ def operar_senales(paquete_A, paquete_B, operacion, id_operacion):
         x,y= restar_senales(paquete_A, paquete_B)
     elif operacion == "multiplicacion":
         x,y= multiplicar_senales(paquete_A, paquete_B)
+    elif operacion == "convolucion1":
+        x,y= convolucionar_senales(paquete_A, paquete_B)
+    elif operacion == "convolucion2":
+        x,y= convolucionar_senales_manualmente(paquete_A, paquete_B)
     escrbir_csv(str(id_operacion) +".csv", "x", "y", x, y)
 
 
@@ -471,3 +519,18 @@ def generar_grafica(id,tipo, amplitud, periodo, muestration, desplazamiento, ini
         x, y = leer_csv(f"static/data/{id}.csv", "x", "y")
 
     return x, y
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
