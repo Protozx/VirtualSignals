@@ -4,6 +4,7 @@ import csv
 import pandas as pd
 import os
 from scipy.integrate import cumtrapz
+from scipy.signal import convolve
 
 
 def hallar_intervalos(inicio_A, inicio_B, fin_A, fin_B):
@@ -17,6 +18,42 @@ def hallar_intervalos(inicio_A, inicio_B, fin_A, fin_B):
     else:
         maximo = fin_B
     return minimo, maximo
+
+
+def convolucionar_senales(paquete_factA, paquete_factB):
+    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+    y_conv = convolve(df_factA['y'], df_factB['y'], mode='full')
+    n = len(y_conv)
+
+    x_inicio = df_factA['x'].iloc[0] + df_factB['x'].iloc[0]
+    x_final = df_factA['x'].iloc[-1] + df_factB['x'].iloc[-1]
+
+    x_conv = np.linspace(x_inicio, x_final, n)
+
+    return x_conv, y_conv
+
+
+def convolucionar_senales_manualmente(paquete_factA, paquete_factB):
+    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+
+    y_A = df_factA['y'].values
+    y_B = df_factB['y'].values
+
+    len_A = len(y_A)
+    len_B = len(y_B)
+    len_conv = len_A + len_B - 1
+    y_conv = np.zeros(len_conv)
+
+    for i in range(len_conv):
+        for j in range(len_B):
+            if i - j >= 0 and i - j < len_A:
+                y_conv[i] += y_A[i - j] * y_B[j]
+
+    x_inicio = df_factA['x'].iloc[0] + df_factB['x'].iloc[0]
+    x_final = df_factA['x'].iloc[-1] + df_factB['x'].iloc[-1]
+    x_conv = np.linspace(x_inicio, x_final, len_conv)
+
+    return x_conv, y_conv
 
 
 def filtrar_menores_inicio(df, inicio):
@@ -66,6 +103,10 @@ def operar_senales(paquete_A, paquete_B, operacion, id_operacion):
         x,y= restar_senales(paquete_A, paquete_B)
     elif operacion == "multiplicacion":
         x,y= multiplicar_senales(paquete_A, paquete_B)
+    elif operacion == "convolucion1":
+        x,y= convolucionar_senales(paquete_A, paquete_B)
+    elif operacion == "convolucion2":
+        x,y= convolucionar_senales_manualmente(paquete_A, paquete_B)
     escrbir_csv(str(id_operacion) +".csv", "x", "y", x, y)
 
 
@@ -77,7 +118,6 @@ def sumar_senales(paquete_sumandoA, paquete_sumandoB):
     print("-----------------------")
     print("Sumando")
     print(df_sB)
-    #print(df_suma)
 
     return df_suma["x"].values, df_suma["y"].values
 
@@ -378,7 +418,6 @@ def generar_exponencial(muestration, inicio, fin, sigma, omega, es_discreta, id_
 
     senal = lambda s,t: np.exp(s*t)
 
-    # PROCEDIMIENTO
     ti = np.linspace(inicio, fin, muestration)
 
     if es_discreta:
@@ -471,3 +510,18 @@ def generar_grafica(id,tipo, amplitud, periodo, muestration, desplazamiento, ini
         x, y = leer_csv(f"static/data/{id}.csv", "x", "y")
 
     return x, y
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

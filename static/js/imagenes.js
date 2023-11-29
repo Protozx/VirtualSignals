@@ -1071,6 +1071,34 @@ $(document).ready(function () {
             </div>
         </div>
 
+        <div class="container-fluid mt-5 mb-4 d-none" id="convnn${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="convn${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar" data-op='4' data-id='${N}';>
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Convolusion Normal
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="convaa${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="conva${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar" data-op='5' data-id='${N}';>
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Convolusion algoritmo
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
         <div class="container-fluid mt-5 mb-4 d-none" id="qq${N}">    
             
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
@@ -1310,6 +1338,8 @@ $(document).ready(function () {
       1: "Sumando!",
       2: "Restando!",
       3: "Multiplicando!",
+      4: "Convolucionando!",
+      5: "Convolucionando!",
     };
     elegir(id);
     cambiarmodo(4);
@@ -1337,6 +1367,8 @@ $(document).ready(function () {
       1: "suma",
       2: "resta",
       3: "multiplicacion",
+      4: "convolucion1",
+      5: "convolucion2",
     };
     datos1 = datificar(op1);
     datos2 = datificar(op2);
@@ -1360,7 +1392,7 @@ $(document).ready(function () {
       },
       success: function (response) {
         Swal.fire({
-          title: "Operación realizada!",
+          title: "Operación realizada en " + response + "secs!",
           confirmButtonColor: colorpr,
           background: "#212529",
           color: "#ffffff",
@@ -1425,6 +1457,8 @@ $(document).ready(function () {
         "ddi", // inicio
         "ddf", // fin
         "pp1", // Poder del filtro del 1
+        "convaa",
+        "convnn",
       ];
       for (const idPrefix of ids) {
         const element = $("#" + idPrefix + i);
@@ -1494,7 +1528,7 @@ $(document).ready(function () {
       2: ["aa", "cc", "mm", "ddi", "ddf", "ii", "jj", "kk"],
       3: ["cc", "ddi", "ddf", "ee", "ff", "ii", "jj", "kk"],
       4: ["dda", "gg", "hh", "cc", "ddi", "ddf", "ii", "jj", "kk"],
-      14: ["nn", "oo", "pp", "ii"],
+      14: ["nn", "oo", "pp", "ii", "convaa", "convnn"],
       15: ["dda", "qq", "rr", "ss", "uu", "pp1", "tt", "vv", "ii"],
       16: ["ww"],
       17: ["xx"],

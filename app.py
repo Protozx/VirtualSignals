@@ -5,6 +5,7 @@ from elemental2 import *
 from basu import *
 from flask import jsonify
 import json
+import time
 #import time
 
 
@@ -56,6 +57,11 @@ def datos():
 @app.route('/urias', methods=['POST'])
 def urias(): 
     global v
+    
+    inicio = time.time()
+
+
+    fin = time.time()
     json_data = request.get_json()
 
     datosA = json_data['datosA']
@@ -110,6 +116,8 @@ def urias():
     # a_value = data1_dict.get('a')
     
     #operar_senales(datosA, datosB, operacion)
+    fin = time.time()
+    v = str(round(fin - inicio, 4))
     return v
 
 @app.route('/filtrodel1', methods=['POST'])
@@ -172,8 +180,22 @@ def practica5():
     else:
         paso2(float(segundos),float(og_mz),float(mue_mz),id)
     
-
     return v
+
+    # victoria
+    # Lesly
+    # Cristina
+    # Yael
+    # Banqueta
+    # Blanco
+    # Polanco
+    # Media
+    # Anaxi
+    # Av
+    # Nz
+    # Fany
+
+
 
 @app.route('/practica7', methods=['POST'])
 def practica7():
@@ -208,15 +230,12 @@ def cortito():
 
 @app.route('/audio', methods=['POST'])
 def audio():
-    # Ensure there's a file named 'audio' in the request
     #if 'audio' not in request.files:
     #    return jsonify({'error': 'No audio file found'}), 400
 
 #    audio_file = request.files['audio']
  #   id_value = request.form.get('id')  # Get other data, like the 'id'
 
-    # Now you can save or process the audio_file as you see fit
-    # Example: Save the file locally
   #  file_path = f"uploads/{id_value}.wav"  # Assuming it's a .wav file
    # audio_file.save(file_path)
 
