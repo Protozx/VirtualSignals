@@ -1099,6 +1099,37 @@ $(document).ready(function () {
             </div>
         </div>
 
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="corrnn${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="corrn${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar" data-op='6' data-id='${N}';>
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Correlacion Normal
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
+
+        <div class="container-fluid mt-5 mb-4 d-none" id="corraa${N}">    
+            
+            <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
+                
+                <div class="col-10">
+                  <button  id="corra${N}" class="btn btn-black text-white mi-input custom-input custom-op rounded-5 w-100 mb-2 esperanza operar" data-op='7' data-id='${N}';>
+                    <div class="mb-0 ms-1 me-1"><h5 class="text-center mb-1">Correlacion algoritmo
+                    </h5></div>
+                  </button>
+                </div>
+                
+            </div>
+        </div>
+
+
         <div class="container-fluid mt-5 mb-4 d-none" id="qq${N}">    
             
             <div class="row d-flex align-content-center justify-content-center align-items-center ojo">
@@ -1330,6 +1361,8 @@ $(document).ready(function () {
     $("#modo1").removeClass("d-none");
     $("#modo2").removeClass("d-none");
     $("#modo3").removeClass("d-none");
+    $("#modo5").removeClass("d-none");
+    $("#modo6").removeClass("d-none");
     $("#extra").removeClass("d-none");
   }
 
@@ -1371,6 +1404,8 @@ $(document).ready(function () {
       3: "multiplicacion",
       4: "convolucion1",
       5: "convolucion2",
+      6: "correlacion1",
+      7: "correlacion2",
     };
     datos1 = datificar(op1);
     datos2 = datificar(op2);
@@ -1461,6 +1496,8 @@ $(document).ready(function () {
         "pp1", // Poder del filtro del 1
         "convaa",
         "convnn",
+        "corraa",
+        "corrnn",
       ];
       for (const idPrefix of ids) {
         const element = $("#" + idPrefix + i);
@@ -1482,6 +1519,8 @@ $(document).ready(function () {
         2: 19,
         3: 20,
         4: 21,
+        5: 110,
+        6: 111,
       };
 
       const cam = camMapping[modo];
@@ -1523,6 +1562,8 @@ $(document).ready(function () {
       21: 16,
       22: 17,
       100: 100,
+      110:110,
+      111:111,
     };
 
     const grafToIds = {
@@ -1530,7 +1571,7 @@ $(document).ready(function () {
       2: ["aa", "cc", "mm", "ddi", "ddf", "ii", "jj", "kk"],
       3: ["cc", "ddi", "ddf", "ee", "ff", "ii", "jj", "kk"],
       4: ["dda", "gg", "hh", "cc", "ddi", "ddf", "ii", "jj", "kk"],
-      14: ["nn", "oo", "pp", "ii", "convaa", "convnn"],
+      14: ["nn", "oo", "pp", "ii"],
       15: ["dda", "qq", "rr", "ss", "uu", "pp1", "tt", "vv", "ii"],
       16: ["ww"],
       17: ["xx"],
@@ -1539,6 +1580,8 @@ $(document).ready(function () {
       101: ["ssg", "ffm"],
       102: ["ffs", "ffm", "ssg"],
       103: ["iim", "nnb", "josue"],
+      110: ["convaa", "convnn", "corrnn", "corraa", "ii"], //relaciones
+      111: ["ii"], //filtros
     };
 
     const graf = tipoToGraf[tipo];
@@ -1914,6 +1957,30 @@ $(document).ready(function () {
     }, 3000);
     cambiarmodo(3);
     modo = 3;
+  });
+
+  $(document).on("click", "#modo5", function () {
+    var nuevoElemento = $(`<div class="alert alert-info ms-3 esperanza popup">
+    <strong>Modo 5</strong> Relaciones
+  </div>`);
+    nuevoElemento.appendTo("#alertas");
+    setTimeout(function () {
+      nuevoElemento.remove();
+    }, 3000);
+    cambiarmodo(5);
+    modo = 5;
+  });
+
+  $(document).on("click", "#modo6", function () {
+    var nuevoElemento = $(`<div class="alert alert-info ms-3 esperanza popup">
+    <strong>Modo 6</strong> Filtros
+  </div>`);
+    nuevoElemento.appendTo("#alertas");
+    setTimeout(function () {
+      nuevoElemento.remove();
+    }, 3000);
+    cambiarmodo(6);
+    modo = 6;
   });
 
   $(document).on("blur", ".libre", function () {

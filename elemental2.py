@@ -21,7 +21,7 @@ def hallar_intervalos(inicio_A, inicio_B, fin_A, fin_B):
 
 
 def convolucionar_senales(paquete_factA, paquete_factB):
-    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+    df_factA, df_factB = corregir_puntos(paquete_factA, paquete_factB)
     y_conv = convolve(df_factA['y'], df_factB['y'], mode='full')
     n = len(y_conv)
 
@@ -34,7 +34,7 @@ def convolucionar_senales(paquete_factA, paquete_factB):
 
 
 def convoluciona_senales_manualmente(paquete_factA, paquete_factB):
-    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+    df_factA, df_factB = corregir_puntos(paquete_factA, paquete_factB)
 
     y_A = df_factA['y'].values
     y_B = df_factB['y'].values
@@ -57,7 +57,7 @@ def convoluciona_senales_manualmente(paquete_factA, paquete_factB):
 
 
 def correlacionar_senales_manualmente(paquete_factA, paquete_factB):
-    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+    df_factA, df_factB = corregir_puntos(paquete_factA, paquete_factB)
 
     y_A = df_factA['y'].values
     y_B = df_factB['y'].values
@@ -72,6 +72,10 @@ def correlacionar_senales_manualmente(paquete_factA, paquete_factB):
             if (i - j) >= 0 and (i - j) < len_A:
                 y_corr[i] += y_A[i - j] * y_B[j]
 
+
+    y_corr /= np.max(np.abs(y_corr)) if np.max(np.abs(y_corr)) else 1
+
+
     x_inicio = df_factA['x'].iloc[0] + df_factB['x'].iloc[0]
     x_final = df_factA['x'].iloc[-1] + df_factB['x'].iloc[-1]
 
@@ -82,13 +86,17 @@ def correlacionar_senales_manualmente(paquete_factA, paquete_factB):
 
 
 def correlacionar_senales(paquete_factA, paquete_factB):
-    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+    df_factA, df_factB = corregir_puntos(paquete_factA, paquete_factB)
 
     y_A = df_factA['y'].values
     y_B = df_factB['y'].values
 
     # Realiza la correlación usando numpy
-    y_corr = np.correlate(y_A, y_B, mode='full')
+    y_corr = np.correlate(y_B, y_A, mode='full')
+
+    
+    y_corr /= np.max(np.abs(y_corr)) if np.max(np.abs(y_corr)) else 1
+
 
     # Calcula el rango de x
     x_inicio = df_factA['x'].iloc[0] + df_factB['x'].iloc[0]
@@ -111,7 +119,7 @@ def filtrar_mayores_fin(df, fin):
     return df
 
 
-def normalizar_datos(paquete_A, paquete_B):
+def corregir_puntos(paquete_A, paquete_B):
     id_senalA, tipoA, amplitudA, periodoA, muestrationA, desplazamientoA, inicioA, finA, sigmaA, omegaA, frec_angularA, angulo_faseA, es_discretaA, paridadA = paquete_A
     id_senalB, tipoB,  amplitudB, periodoB, muestrationB, desplazamientoB, inicioB, finB, sigmaB, omegaB, frec_angularB, angulo_faseB, es_discretaB, paridadB = paquete_B
 
@@ -160,7 +168,7 @@ def operar_senales(paquete_A, paquete_B, operacion, id_operacion):
 
 
 def sumar_senales(paquete_sumandoA, paquete_sumandoB):
-    df_sA, df_sB = normalizar_datos(paquete_sumandoA, paquete_sumandoB)
+    df_sA, df_sB = corregir_puntos(paquete_sumandoA, paquete_sumandoB)
     df_suma = df_sA[['x']].copy()
     df_suma['y'] = df_sA['y'] + df_sB['y']
     print(df_sA)
@@ -172,7 +180,7 @@ def sumar_senales(paquete_sumandoA, paquete_sumandoB):
 
 
 def restar_senales(paquete_minuendo, paquete_sustraendo):
-    df_minuendo, df_sustraendo = normalizar_datos(paquete_minuendo, paquete_sustraendo)
+    df_minuendo, df_sustraendo = corregir_puntos(paquete_minuendo, paquete_sustraendo)
     df_resta = df_minuendo[['x']].copy()
     df_resta['y'] = df_minuendo['y'] - df_sustraendo['y']
     print("-----------------------")
@@ -182,7 +190,7 @@ def restar_senales(paquete_minuendo, paquete_sustraendo):
 
 
 def multiplicar_senales(paquete_factA, paquete_factB):
-    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+    df_factA, df_factB = corregir_puntos(paquete_factA, paquete_factB)
     df_producto = df_factA[['x']].copy()
     df_producto['y'] = df_factA['y'] * df_factB['y']
     return df_producto["x"].values, df_producto["y"].values
@@ -1245,7 +1253,7 @@ def generar_grafica(id,tipo, amplitud, periodo, muestration, desplazamiento, ini
 
 
 def convolucionar_senales_manualmente(paquete_factA, paquete_factB):
-    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+    df_factA, df_factB = corregir_puntos(paquete_factA, paquete_factB)
 
     y_A = df_factA['y'].values
     y_B = df_factB['y'].values
