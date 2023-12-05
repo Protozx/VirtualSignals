@@ -1340,6 +1340,8 @@ $(document).ready(function () {
       3: "Multiplicando!",
       4: "Convolucionando!",
       5: "Convolucionando!",
+      6: "Correlacionando!",
+      7: "Correlacionando!",
     };
     elegir(id);
     cambiarmodo(4);

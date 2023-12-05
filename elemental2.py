@@ -33,7 +33,7 @@ def convolucionar_senales(paquete_factA, paquete_factB):
     return x_conv, y_conv
 
 
-def convolucionar_senales_manualmente(paquete_factA, paquete_factB):
+def convoluciona_senales_manualmente(paquete_factA, paquete_factB):
     df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
 
     y_A = df_factA['y'].values
@@ -44,16 +44,61 @@ def convolucionar_senales_manualmente(paquete_factA, paquete_factB):
     len_conv = len_A + len_B - 1
     y_conv = np.zeros(len_conv)
 
-    for i in range(len_conv):
-        for j in range(len_B):
-            if i - j >= 0 and i - j < len_A:
-                y_conv[i] += y_A[i - j] * y_B[j]
+    for i in range(len_conv-1):
+        for j in range(len_B-1):
+            if i + j >= 0 and i + j < len_conv:
+                y_conv[i+j] += y_A[i] * y_B[j]
 
     x_inicio = df_factA['x'].iloc[0] + df_factB['x'].iloc[0]
     x_final = df_factA['x'].iloc[-1] + df_factB['x'].iloc[-1]
     x_conv = np.linspace(x_inicio, x_final, len_conv)
 
     return x_conv, y_conv
+
+
+def correlacionar_senales_manualmente(paquete_factA, paquete_factB):
+    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+
+    y_A = df_factA['y'].values
+    y_B = df_factB['y'].values
+
+    len_A = len(y_A)
+    len_B = len(y_B)
+    len_corr = len_A + len_B - 1
+    y_corr = np.zeros(len_corr)
+
+    for i in range(len_corr):
+        for j in range(len_B):
+            if (i - j) >= 0 and (i - j) < len_A:
+                y_corr[i] += y_A[i - j] * y_B[j]
+
+    x_inicio = df_factA['x'].iloc[0] + df_factB['x'].iloc[0]
+    x_final = df_factA['x'].iloc[-1] + df_factB['x'].iloc[-1]
+
+    x_corr = np.linspace(x_inicio, x_final, len_corr)
+
+    return x_corr, y_corr
+
+
+
+def correlacionar_senales(paquete_factA, paquete_factB):
+    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+
+    y_A = df_factA['y'].values
+    y_B = df_factB['y'].values
+
+    # Realiza la correlación usando numpy
+    y_corr = np.correlate(y_A, y_B, mode='full')
+
+    # Calcula el rango de x
+    x_inicio = df_factA['x'].iloc[0] + df_factB['x'].iloc[0]
+    x_final = df_factA['x'].iloc[-1] + df_factB['x'].iloc[-1]
+    len_corr = len(y_corr)
+    x_corr = np.linspace(x_inicio, x_final, len_corr)
+
+    return x_corr, y_corr
+
+
 
 
 def filtrar_menores_inicio(df, inicio):
@@ -107,6 +152,10 @@ def operar_senales(paquete_A, paquete_B, operacion, id_operacion):
         x,y= convolucionar_senales(paquete_A, paquete_B)
     elif operacion == "convolucion2":
         x,y= convolucionar_senales_manualmente(paquete_A, paquete_B)
+    elif operacion == "correlacion1":
+        x,y= correlacionar_senales(paquete_A, paquete_B)
+    elif operacion == "correlacion2":
+        x,y= correlacionar_senales_manualmente(paquete_A, paquete_B)
     escrbir_csv(str(id_operacion) +".csv", "x", "y", x, y)
 
 
@@ -525,3 +574,695 @@ def generar_grafica(id,tipo, amplitud, periodo, muestration, desplazamiento, ini
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def convolucionar_senales_manualmente(paquete_factA, paquete_factB):
+    df_factA, df_factB = normalizar_datos(paquete_factA, paquete_factB)
+
+    y_A = df_factA['y'].values
+    y_B = df_factB['y'].values
+
+    len_A = len(y_A)
+    len_B = len(y_B)
+    len_conv = len_A + len_B - 1
+    y_conv = np.zeros(len_conv)
+
+    for i in range(len_conv):
+        for j in range(len_B):
+            if i - j >= 0 and i - j < len_A:
+                y_conv[i] += y_A[i - j] * y_B[j]
+
+    x_inicio = df_factA['x'].iloc[0] + df_factB['x'].iloc[0]
+    x_final = df_factA['x'].iloc[-1] + df_factB['x'].iloc[-1]
+
+    x_conv = np.linspace(x_inicio, x_final, len_conv)
+
+    return x_conv, y_conv
