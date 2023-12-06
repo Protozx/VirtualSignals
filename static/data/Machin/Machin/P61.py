@@ -1,6 +1,6 @@
 import pandas as pd
 from hmmlearn import hmm
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold
 from sklearn.preprocessing import LabelEncoder
 
 def cargar_datos_markov(filename):
@@ -39,13 +39,27 @@ def clasificar_markov(X_test, hmms) -> list:
 def evaluar_markov(predictions, y_test):
     return sum(predictions == y_test) / len(y_test)
 
-def main():
-    data, label_encoder = cargar_datos_markov('dataset.csv')
-    X_train, X_test, y_train, y_test = separar_datos_markov(data)
-    hmms = entrenar_markov(X_train, y_train)
-    predictions = clasificar_markov(X_test, hmms)
-    accuracy = evaluar_markov(predictions, y_test)
-    print(f'Precisión: {accuracy}')
+def validacion_cruzada_kfold(data, k):
+    kf = KFold(n_splits=k, shuffle=True, random_state=42)
+    scores = []
+
+    for train_index, test_index in kf.split(data):
+        X_train, X_test = data.iloc[train_index], data.iloc[test_index]
+        y_train, y_test = X_train['label'], X_test['label']
+        X_train = X_train.drop('label', axis=1)
+        X_test = X_test.drop('label', axis=1)
+
+        hmms = entrenar_markov(X_train, y_train)
+        predictions = clasificar_markov(X_test, hmms)
+        score = evaluar_markov(predictions, y_test)
+        scores.append(score)
+
+    return sum(scores) / len(scores)
+
+def puntaje_markov(archivo):
+    data, label_encoder = cargar_datos_markov(archivo)
+    accuracy_promedio = validacion_cruzada_kfold(data, 5)
+    return accuracy_promedio
 
 if __name__ == "__main__":
-    main()
+    print(f'Precisión promedio con validación cruzada K-Fold: {puntaje_markov("dataset.csv")}')

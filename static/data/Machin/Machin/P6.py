@@ -10,7 +10,7 @@ from sklearn.base import clone
 from sklearn.pipeline import Pipeline
 from hmmlearn import hmm
 from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold
 
 def cargar_datos(ruta_csv):
     data = pd.read_csv(ruta_csv, header=None)
@@ -47,16 +47,17 @@ def evaluar_con_kfold_manual(X, y, k=5):
     modelos = {
         'KNN': Pipeline([('scaler', StandardScaler()), ('classifier', KNeighborsClassifier(n_neighbors=5))]),
         'Regresión Logística': Pipeline([('scaler', StandardScaler()), ('classifier', LogisticRegression(random_state=42))]),
-        'SVM': Pipeline([('scaler', StandardScaler()), ('classifier', SVC(kernel='linear', random_state=42))]),
-        'Bayesiano': Pipeline([('scaler', StandardScaler()), ('classifier', GaussianNB())])
+        'Maquina de soporte vectorial': Pipeline([('scaler', StandardScaler()), ('classifier', SVC(kernel='linear', random_state=42))]),
+        'Clasificador Bayesiano': Pipeline([('scaler', StandardScaler()), ('classifier', GaussianNB())])
     }
 
     resultados = dict()
-    
+    resultados['Cadenas ocultas de markov'] =  puntaje_markov('dataset.csv')
+    print(f"\n\nCadenas ocultas de markov: {resultados['Cadenas ocultas de markov']}")
     for nombre, modelo in modelos.items():
         scores = k_fold_cross_validation(X, y, k, modelo)
         resultados[nombre] = scores
-        print(f"{nombre}: {np.mean(scores)} (+/- {np.std(scores)})")
+        print(f"{nombre}: {np.mean(scores)}")
     mejor_modelo = max(resultados, key=lambda nombre: np.mean(resultados[nombre]))
     
     print(f"\nEl mejor modelo es {mejor_modelo} con una precisión de {np.mean(resultados[mejor_modelo])}.")
@@ -97,6 +98,28 @@ def clasificar_markov(X_test, hmms) -> list:
 
 def evaluar_markov(predictions, y_test):
     return sum(predictions == y_test) / len(y_test)
+
+def validacion_cruzada_kfold(data, k):
+    kf = KFold(n_splits=k, shuffle=True, random_state=42)
+    scores = []
+
+    for train_index, test_index in kf.split(data):
+        X_train, X_test = data.iloc[train_index], data.iloc[test_index]
+        y_train, y_test = X_train['label'], X_test['label']
+        X_train = X_train.drop('label', axis=1)
+        X_test = X_test.drop('label', axis=1)
+
+        hmms = entrenar_markov(X_train, y_train)
+        predictions = clasificar_markov(X_test, hmms)
+        score = evaluar_markov(predictions, y_test)
+        scores.append(score)
+
+    return sum(scores) / len(scores)
+
+def puntaje_markov(archivo):
+    data, label_encoder = cargar_datos_markov(archivo)
+    accuracy_promedio = validacion_cruzada_kfold(data, 5)
+    return accuracy_promedio
 
 def main(ruta_csv):
     X, y = cargar_datos(ruta_csv)
