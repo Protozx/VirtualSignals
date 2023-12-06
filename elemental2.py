@@ -94,7 +94,7 @@ def correlacionar_senales(paquete_factA, paquete_factB):
     # Realiza la correlación usando numpy
     y_corr = np.correlate(y_B, y_A, mode='full')
 
-    
+
     y_corr /= np.max(np.abs(y_corr)) if np.max(np.abs(y_corr)) else 1
 
 
