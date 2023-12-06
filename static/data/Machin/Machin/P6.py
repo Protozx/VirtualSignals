@@ -19,7 +19,7 @@ def cargar_datos(ruta_csv):
     return X, y
 
 def cargar_datos_markov(filename):
-    columns = ['Time', 'X', 'Y', 'Z', 'R', 'Theta', 'label']
+    columns = ['', '', '', '', '', '', '']
     data = pd.read_csv(filename, header=None, names=columns)
     label_encoder = LabelEncoder()
     data['label'] = label_encoder.fit_transform(data['label'])
@@ -27,7 +27,7 @@ def cargar_datos_markov(filename):
 
 
 def separar_datos_markov(data):
-    X = data[['Time', 'X', 'Y', 'Z', 'R', 'Theta']]
+    X = data[['', '', '', '', '', '']]
     y = data['label']
     return train_test_split(X, y, test_size=0.3, random_state=42)
 
