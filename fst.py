@@ -56,49 +56,38 @@ def convolucionar_senales_manualmente(paquete_factA, paquete_factB):
     return x_conv, y_conv
 
 
+
+def fst_correlate(y_A, y_B):
+
+    len_A = len(y_A)
+    len_B = len(y_B)
+    y_corr = []
+
+    for desplaz in range(-len_B + 1, len_A):
+        sum_corr = 0
+
+        for i in range(len_B):
+            if 0 <= desplaz + i < len_A:
+                sum_corr += y_A[desplaz + i] * y_B[i]
+        
+        y_corr.append(sum_corr)
+
+    return np.array(y_corr)
+
+
+
+
 def correlacionar_senales_manualmente(paquete_factA, paquete_factB):
     df_factA, df_factB = corregir_puntos(paquete_factA, paquete_factB)
 
     y_A = df_factA['y'].values
     y_B = df_factB['y'].values
 
-    len_A = len(y_A)
-    len_B = len(y_B)
-    len_corr = len_A + len_B - 1
-    y_corr = np.zeros(len_corr)
-
-    for i in range(len_corr):
-        for j in range(len_B):
-            if (i - j) >= 0 and (i - j) < len_A:
-                y_corr[i] += y_A[i - j] * y_B[j]
+    y_corr = fst_correlate(y_A, y_B)
 
 
     y_corr /= np.max(np.abs(y_corr)) if np.max(np.abs(y_corr)) else 1
 
-
-    x_inicio = df_factA['x'].iloc[0] + df_factB['x'].iloc[0]
-    x_final = df_factA['x'].iloc[-1] + df_factB['x'].iloc[-1]
-
-    x_corr = np.linspace(x_inicio, x_final, len_corr)
-
-    return x_corr, y_corr
-
-
-
-def correlacionar_senales(paquete_factA, paquete_factB):
-    df_factA, df_factB = corregir_puntos(paquete_factA, paquete_factB)
-
-    y_A = df_factA['y'].values
-    y_B = df_factB['y'].values
-
-    # Realiza la correlación usando numpy
-    y_corr = np.correlate(y_B, y_A, mode='full')
-
-
-    y_corr /= np.max(np.abs(y_corr)) if np.max(np.abs(y_corr)) else 1
-
-
-    # Calcula el rango de x
     x_inicio = df_factA['x'].iloc[0] + df_factB['x'].iloc[0]
     x_final = df_factA['x'].iloc[-1] + df_factB['x'].iloc[-1]
     len_corr = len(y_corr)
@@ -107,6 +96,22 @@ def correlacionar_senales(paquete_factA, paquete_factB):
     return x_corr, y_corr
 
 
+def correlacionar_senales(paquete_factA, paquete_factB):
+    df_factA, df_factB = corregir_puntos(paquete_factA, paquete_factB)
+
+    y_A = df_factA['y'].values
+    y_B = df_factB['y'].values
+    y_corr = np.correlate(y_A, y_B, mode='full')
+
+
+    y_corr /= np.max(np.abs(y_corr)) if np.max(np.abs(y_corr)) else 1
+
+    x_inicio = df_factA['x'].iloc[0] + df_factB['x'].iloc[0]
+    x_final = df_factA['x'].iloc[-1] + df_factB['x'].iloc[-1]
+    len_corr = len(y_corr)
+    x_corr = np.linspace(x_inicio, x_final, len_corr)
+
+    return x_corr, y_corr
 
 
 def filtrar_menores_inicio(df, inicio):

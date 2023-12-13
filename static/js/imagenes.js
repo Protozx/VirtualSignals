@@ -1378,7 +1378,7 @@ $(document).ready(function () {
     };
     elegir(id);
     cambiarmodo(4);
-    $("#ww" + id).addClass("d-none");
+    //$("#ww" + id).addClass("d-none");
     sliders(id, 22);
     op1 = id;
     opsign = oper;
